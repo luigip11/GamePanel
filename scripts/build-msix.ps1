@@ -84,6 +84,7 @@ try {
         SchemaVersion = 1; Package = $package; Sha256 = (Get-FileHash -LiteralPath $package -Algorithm SHA256).Hash.ToLowerInvariant()
         IdentityName = $IdentityName; Publisher = $Publisher; Version = $PackageVersion; Architecture = 'x64'
         IncludesTestProbe = [bool]$ProbeDirectory; Signed = $false; StoreApproved = $false
+        Languages = @($manifest.Package.Resources.Resource | ForEach-Object { $_.Language })
     }
     $result | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $output ($IdentityName + '-package.json')) -Encoding utf8
     Write-Host "PASS validated unsigned MSIX: $package"

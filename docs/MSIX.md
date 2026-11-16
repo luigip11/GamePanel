@@ -38,10 +38,10 @@ L'identità predefinita `GamePanel.Compatibility`, il publisher `CN=GamePanelCom
     -IdentityName '<Package/Identity/Name da Partner Center>' `
     -Publisher '<Package/Identity/Publisher da Partner Center>' `
     -PublisherDisplayName '<nome editore registrato>' `
-    -PackageVersion '0.1.16.0'
+    -PackageVersion '1.0.16.0'
 ```
 
-La revisione della versione deve terminare in `.0` per l'invio Store. Non inviare il pacchetto di prova con `CompatibilityProbe`, né descriverlo come certificato o approvato.
+La versione Store deve avere major non zero e revisione finale `.0`. Il wrapper `build-store-msix.ps1` usa `1.0.16.0` per l'alpha.16 e l'identità riservata del titolare. Le identità di prova conservano `0.1.16.0`. Non inviare il pacchetto di prova con `CompatibilityProbe`, né descriverlo come certificato o approvato.
 
 ## Collaudo Windows isolato
 

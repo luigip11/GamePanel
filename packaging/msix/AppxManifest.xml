@@ -12,7 +12,7 @@
     <Description>Libreria, analisi e configurazioni per i tuoi giochi PC.</Description>
     <Logo>PackageAssets\StoreLogo.png</Logo>
   </Properties>
-  <Resources><Resource Language="it-IT" /><Resource Language="en-US" /></Resources>
+  <Resources><Resource Language="it-IT" /></Resources>
   <Dependencies><TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.22000.0" MaxVersionTested="10.0.26100.0" /></Dependencies>
   <Applications>
     <Application Id="GamePanel" Executable="App\GamePanel.exe"

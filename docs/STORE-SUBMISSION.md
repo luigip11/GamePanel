@@ -26,10 +26,30 @@ Su Windows, dopo la pubblicazione standard, eseguire `./scripts/build-store-msix
 - Supporto: https://github.com/luigip11/GamePanel/issues
 - Prezzo proposto: gratuito, da confermare dal titolare nel portale.
 - Famiglia dispositivi: PC Windows x64. Il manifest della prova richiede Windows 11 (build 22000 o successiva); allineare i requisiti dichiarati al manifest definitivo.
-- Lingua della scheda iniziale: italiano. La UI attuale è italiana; non presentarla come tradotta in inglese solo perché il manifest include anche `en-US`.
+- Lingua della scheda iniziale: italiano. La UI attuale è italiana; il manifest dichiara solo `it-IT`. Non presentarla come tradotta in inglese.
 - Privacy: revisionare `PRIVACY-DRAFT.md` e pubblicare una versione definitiva a un URL pubblico stabile prima di inserirlo nel portale. Nessun URL non ancora pubblicato va dichiarato come disponibile.
 - Age ratings: compilare il questionario IARC in base alle funzioni e ai contenuti effettivamente offerti. Non copiare la classificazione di Need for Speed e non inventare un'età assegnata.
 - Submission options: selezionare **Don't publish this submission until I select Publish now**, così la certificazione non causa automaticamente la pubblicazione.
+
+## Completare le tre sezioni rimaste nel portale
+
+### Pacchetti
+
+Il pacchetto Store usa `1.0.16.0`: major non zero e quarta componente riservata allo Store impostata a zero. L'app rimane alpha.16; il numero del pacchetto non annuncia una release stabile. Le vecchie identità di collaudo possono conservare `0.1.16.0` e non vanno caricate nel prodotto riservato.
+
+Scaricare l'artifact Partner Center dell'ultima Action riuscita, estrarre lo ZIP e caricare **solo** `VirtualLP.GamePanel-1.0.16.0-x64-unsigned.msix` nella sezione Pacchetti della candidatura **Draft**. Non caricare lo ZIP dell'artifact, il pacchetto CompatibilityTest o lo ZIP portatile; non aprire l'MSIX con doppio clic per installarlo sul PC.
+
+Attendere la validazione del portale e controllare i dettagli: identità `VirtualLP.GamePanel`, editore `VirtualLP`, architettura x64 e lingua italiano (`it-IT`). La famiglia dispositivi è Windows Desktop; lasciare abilitata l'offerta per PC e non dichiarare supporto a famiglie non provate. Completare e salvare anche le eventuali scelte obbligatorie della sezione: il solo stato "Validated" di un file non garantisce che tutta la sezione sia completa.
+
+L'upload nella bozza serve a verificare i metadati. È distinto da **Submit for certification**, che resta da eseguire dopo i controlli finali. In caso di rifiuto annotare il testo esatto del portale; la validazione locale MakeAppx non sostituisce quella di Partner Center.
+
+### Elenchi dello Store / Store listings
+
+Aprire o aggiungere la scheda **Italiano (Italia)**. "Elenchi dello Store" indica le schede localizzate del prodotto, non un elenco di negozi. Incollare la descrizione italiana riportata sotto, aggiungere le funzionalità e almeno una schermata reale dell'app conforme ai requisiti mostrati dal portale; controllare eventuali campi grafici obbligatori e salvare la scheda. Per ora non dichiarare una UI inglese.
+
+### Opzioni di invio
+
+Impostare **Don't publish this submission until I select Publish now**. Nella richiesta per `runFullTrust` usare la motivazione riportata sotto; nelle note per la certificazione usare la bozza solo dopo aver completato i passaggi di prova mancanti. Salvare la sezione. Il questionario capability e la certificazione restano soggetti alla valutazione Microsoft; salvare la bozza non è un'approvazione.
 
 ## Descrizione italiana da incollare
 
