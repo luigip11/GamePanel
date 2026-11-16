@@ -12,6 +12,12 @@ In **Product management → Product identity** copiare esattamente:
 
 Non occorrono password, documenti personali, chiavi private o token. L'eventuale verifica dell'identità dell'account è separata dalla candidatura dell'app: i documenti richiesti da Microsoft vanno inviati esclusivamente nel portale ufficiale.
 
+### Identità riservata ricevuta dal titolare
+
+I valori pubblici sono fissati in `packaging/msix/StoreIdentity.json`: nome tecnico `VirtualLP.GamePanel`, publisher `CN=33AE9F23-7E92-4890-8DF6-5BEE6CEA6EDB`, nome editore `VirtualLP`, PFN `VirtualLP.GamePanel_z68edq0c3m1tg`, Store ID `9NP833B30WVB`. La riga del nome tradotta dal browser non va copiata nel manifest: il nome tecnico è ricavabile dal PFN, prima dell'ultimo underscore.
+
+Su Windows, dopo la pubblicazione standard, eseguire `./scripts/build-store-msix.ps1 -PackageDirectory artifacts/GamePanel-win-x64`. La Action MSIX prepara lo stesso artifact separato, non firmato, con un'unica applicazione e senza CompatibilityProbe. Non è ancora pronto per l'invio: restano i punti della checklist finale. La prenotazione del nome e la compilazione non dimostrano che la pagina pubblica Store sia già disponibile.
+
 ## Proprietà e disponibilità
 
 - Nome riservato: **GamePanel**.

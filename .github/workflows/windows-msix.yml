@@ -58,6 +58,15 @@ jobs:
       - name: Install and exercise the compatibility package on the disposable runner
         shell: powershell
         run: ./scripts/check-msix.ps1 -MsixPath artifacts/msix/GamePanel.CompatibilityTest-0.1.16.0-x64-unsigned.msix -GraphicsFixturePath artifacts/graphics-fixture/speed2.exe
+      - name: Prepare unsigned package with the reserved Partner Center identity
+        shell: pwsh
+        run: ./scripts/build-store-msix.ps1 -PackageDirectory artifacts/GamePanel-win-x64
+      - name: Partner Center identity package - unsigned and not ready for submission
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: GamePanel-PartnerCenter-unsigned-NOT-READY
+          path: artifacts/msix-store/
+          if-no-files-found: error
       - name: Unsigned package for review - not a Smart App Control fix or a Store release
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
