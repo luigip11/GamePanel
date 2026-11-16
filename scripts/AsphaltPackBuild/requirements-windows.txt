@@ -1,0 +1,2 @@
+# CPython 3.12, Windows x64: official NumPy wheel SHA-256 from PyPI.
+numpy==2.3.5 --hash=sha256:86945f2ee6d10cdfd67bcb4069c1662dd711f7e2a4343db5cecec06b87cf31aa

@@ -33,7 +33,7 @@ jobs:
       - name: Build the existing original material
         shell: pwsh
         run: |
-          python -m pip install --require-hashes -r scripts/AsphaltPackBuild/requirements.txt
+          python -m pip install --require-hashes --only-binary=:all: -r scripts/AsphaltPackBuild/requirements-windows.txt
           if ($LASTEXITCODE -ne 0) { throw 'Pinned material dependency installation failed.' }
           python scripts/AsphaltPackBuild/build_directx_sample.py --output src/GamePanel.Desktop/Assets/DirectXAsphalt
           if ($LASTEXITCODE -ne 0) { throw 'Original material generation failed.' }
