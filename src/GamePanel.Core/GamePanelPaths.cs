@@ -14,7 +14,7 @@ public static class GamePanelPaths
             }
             var local = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             if (string.IsNullOrWhiteSpace(local)) throw new InvalidOperationException("Cartella dati utente non disponibile.");
-            return Path.Combine(local, "GamePanel");
+            return AppDistribution.ResolveDataRoot(local, AppDistribution.PackageFamilyName);
         }
     }
 }

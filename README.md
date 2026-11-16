@@ -10,6 +10,8 @@ Le funzioni vengono proposte in base al gioco, al renderer e all'hardware rileva
 
 Per usare una build portabile, estrarre tutto lo ZIP in una cartella nuova e aprire **GamePanel.exe**. Runtime dell’app incluso; guide in **Docs**, licenze in **Licenses**, materiali in **Assets**. Giochi e pacchetti Remix non sono inclusi.
 
+È in preparazione una [verifica tecnica MSIX / Microsoft Store](docs/MSIX.md): non è ancora una versione firmata o pubblicata sullo Store.
+
 ## Changelog alpha.16
 
 - UI Windows aggiornata al prototipo approvato: schede libreria adattive, icone informative, ricerca con lente e ordinamento recenti/meno recenti/alfabetico oltre cinque giochi.

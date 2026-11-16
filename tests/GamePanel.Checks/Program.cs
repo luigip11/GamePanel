@@ -167,6 +167,7 @@ Check("Scansione non segue collegamenti", () =>
     }
     finally { if (Directory.Exists(link)) Directory.Delete(link); Directory.Delete(target, true); }
 });
+DistributionChecks.Register(Check, temp);
 BackupChecks.Register(Check, temp);
 var ug1DisplayAt = Array.IndexOf(args, "--ug1-display-package");
 ResolutionChecks.Register(Check, temp, Fixture, args.Contains("--verify-official-reshade", StringComparer.Ordinal), ug1DisplayAt >= 0 && ug1DisplayAt + 1 < args.Length ? args[ug1DisplayAt + 1] : null);

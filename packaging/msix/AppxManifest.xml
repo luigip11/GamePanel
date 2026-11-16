@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Compatibility identity only. Replace through build-msix.ps1 with the Partner Center identity for submission. -->
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+         xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+         xmlns:uap10="http://schemas.microsoft.com/appx/manifest/uap/windows10/10"
+         xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+         IgnorableNamespaces="uap uap10 rescap">
+  <Identity Name="GamePanel.Compatibility" Publisher="CN=GamePanelCompatibility" Version="0.1.16.0" ProcessorArchitecture="x64" />
+  <Properties>
+    <DisplayName>GamePanel</DisplayName>
+    <PublisherDisplayName>GamePanel contributors</PublisherDisplayName>
+    <Description>Libreria, analisi e configurazioni per i tuoi giochi PC.</Description>
+    <Logo>PackageAssets\StoreLogo.png</Logo>
+  </Properties>
+  <Resources><Resource Language="it-IT" /><Resource Language="en-US" /></Resources>
+  <Dependencies><TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.22000.0" MaxVersionTested="10.0.26100.0" /></Dependencies>
+  <Applications>
+    <Application Id="GamePanel" Executable="App\GamePanel.exe"
+                 uap10:RuntimeBehavior="packagedClassicApp" uap10:TrustLevel="mediumIL">
+      <uap:VisualElements DisplayName="GamePanel" Description="Libreria e configurazioni per giochi PC"
+          BackgroundColor="#101419" Square150x150Logo="PackageAssets\Square150x150Logo.png"
+          Square44x44Logo="PackageAssets\Square44x44Logo.png" />
+    </Application>
+  </Applications>
+  <Capabilities><Capability Name="internetClient" /><rescap:Capability Name="runFullTrust" /></Capabilities>
+</Package>

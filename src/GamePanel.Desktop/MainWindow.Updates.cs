@@ -14,9 +14,17 @@ internal sealed partial class MainWindow
     private Button _updatesButton = null!;
     private bool _checkingUpdates;
     private CancellationTokenSource? _checkUpdatesCancellation;
+    private static string UpdatesLabel => AppDistribution.HasPackageIdentity ? "Aggiornamenti Store" : "Controlla aggiornamenti";
     private async Task CheckSoftwareUpdatesAsync()
     {
         if (_checkingUpdates || _busy) return;
+        if (AppDistribution.HasPackageIdentity)
+        {
+            try { Process.Start(new ProcessStartInfo("ms-windows-store://downloadsandupdates") { UseShellExecute = true }); }
+            catch (Exception e) when (e is System.ComponentModel.Win32Exception or InvalidOperationException)
+            { MessageBox.Show(this, "Apri Microsoft Store e controlla gli aggiornamenti dalla Libreria.\n\n" + e.Message, "GamePanel · aggiornamenti"); }
+            return;
+        }
         _checkingUpdates = true; _updatesButton.IsEnabled = false; _updatesButton.Content = "Controllo…";
         _checkUpdatesCancellation = new CancellationTokenSource(TimeSpan.FromSeconds(30));
         try
@@ -39,11 +47,14 @@ internal sealed partial class MainWindow
         finally
         {
             _checkUpdatesCancellation?.Dispose(); _checkUpdatesCancellation = null; _checkingUpdates = false;
-            if (!_closing) { _updatesButton.Content = "Controlla aggiornamenti"; _updatesButton.IsEnabled = !_busy; }
+            if (!_closing) { _updatesButton.Content = UpdatesLabel; _updatesButton.IsEnabled = !_busy; }
         }
     }
     private async Task InstallSoftwareUpdateAsync(SoftwareRelease release)
     {
+        // A package's installation directory belongs to the deployment service, never our portable updater.
+        if (AppDistribution.HasPackageIdentity)
+            throw new InvalidOperationException("Questa copia si aggiorna dal canale di installazione del pacchetto, non tramite l'updater portatile.");
         _busy = true; _path.IsReadOnly = true; _select.IsEnabled = false; _analyze.IsEnabled = false; _export.IsEnabled = false;
         _cancel.Content = "Annulla download"; _cancel.Visibility = Visibility.Visible; _status.Text = "Preparazione aggiornamento " + release.Version;
         var operation = new CancellationTokenSource(); _cancellation = operation; Render(); var handedOff = false;

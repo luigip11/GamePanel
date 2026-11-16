@@ -43,10 +43,12 @@ internal sealed partial class MainWindow
         shell.Children.Add(sidebar);
         var bottom = new StackPanel { Margin = new Thickness(20, 12, 20, 22) };
         bottom.Children.Add(DesignSystem.Chip(AppVersion.Current.PreRelease?.Replace('.', ' ').ToUpperInvariant() ?? "STABILE", Accent));
-        _updatesButton = Button("Controlla aggiornamenti", async (_, _) => await CheckSoftwareUpdatesAsync());
-        SmallAction(_updatesButton, "Controlla aggiornamenti", "refresh");
+        _updatesButton = Button(UpdatesLabel, async (_, _) => await CheckSoftwareUpdatesAsync());
+        SmallAction(_updatesButton, UpdatesLabel, "refresh");
         _updatesButton.FontSize = 11; _updatesButton.Padding = new Thickness(9, 9, 9, 9); _updatesButton.Margin = new Thickness(0, 10, 0, 0);
-        _updatesButton.ToolTip = "Controlla le release GitHub di GamePanel. Scarica e sostituisce l'app solo dopo la tua conferma.";
+        _updatesButton.ToolTip = AppDistribution.HasPackageIdentity
+            ? "Apri la Libreria di Microsoft Store per gestire gli aggiornamenti."
+            : "Controlla le release GitHub di GamePanel. Scarica e sostituisce l'app solo dopo la tua conferma.";
         System.Windows.Automation.AutomationProperties.SetAutomationId(_updatesButton, "CheckSoftwareUpdates"); bottom.Children.Add(_updatesButton);
         DockPanel.SetDock(bottom, Dock.Bottom); sidebar.Children.Add(bottom);
         var menu = new StackPanel { Margin = new Thickness(14, 28, 14, 0) };
