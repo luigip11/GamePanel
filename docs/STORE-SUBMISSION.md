@@ -1,6 +1,6 @@
 # GamePanel — bozza candidatura Microsoft Store
 
-Preparata il 16 novembre 2026. Questi testi accompagnano la prova MSIX della PR #8; non attestano una certificazione e non autorizzano l'invio o la pubblicazione. L'identità del pacchetto deve corrispondere ai valori riservati in Partner Center.
+Aggiornata il 17 novembre 2026. Questi testi accompagnano la prova MSIX della PR #8; non attestano una certificazione e non autorizzano l'invio o la pubblicazione. L'identità del pacchetto deve corrispondere ai valori riservati in Partner Center.
 
 ## Dati necessari dal portale
 
@@ -16,7 +16,7 @@ Non occorrono password, documenti personali, chiavi private o token. L'eventuale
 
 I valori pubblici sono fissati in `packaging/msix/StoreIdentity.json`: nome tecnico `VirtualLP.GamePanel`, publisher `CN=33AE9F23-7E92-4890-8DF6-5BEE6CEA6EDB`, nome editore `VirtualLP`, PFN `VirtualLP.GamePanel_z68edq0c3m1tg`, Store ID `9NP833B30WVB`. La riga del nome tradotta dal browser non va copiata nel manifest: il nome tecnico è ricavabile dal PFN, prima dell'ultimo underscore.
 
-Su Windows, dopo la pubblicazione standard, eseguire `./scripts/build-store-msix.ps1 -PackageDirectory artifacts/GamePanel-win-x64`. La Action MSIX prepara lo stesso artifact separato, non firmato, con un'unica applicazione e senza CompatibilityProbe. Non è ancora pronto per l'invio: restano i punti della checklist finale. La prenotazione del nome e la compilazione non dimostrano che la pagina pubblica Store sia già disponibile.
+Su Windows, dopo la pubblicazione standard, eseguire `./scripts/build-store-msix.ps1 -PackageDirectory artifacts/GamePanel-win-x64`. La Action MSIX prepara lo stesso artifact separato, non firmato, con un'unica applicazione e senza CompatibilityProbe. Il pacchetto alpha.17 è un aggiornamento del codice: la certificazione del precedente `1.0.16.0` non copre `1.0.17.0`. Prima dell'invio controllare il riepilogo della nuova candidatura. La prenotazione del nome e la compilazione non dimostrano che la pagina pubblica Store sia già disponibile.
 
 ## Proprietà e disponibilità
 
@@ -35,13 +35,13 @@ Su Windows, dopo la pubblicazione standard, eseguire `./scripts/build-store-msix
 
 ### Pacchetti
 
-Il pacchetto Store usa `1.0.16.0`: major non zero e quarta componente riservata allo Store impostata a zero. L'app rimane alpha.16; il numero del pacchetto non annuncia una release stabile. Le vecchie identità di collaudo possono conservare `0.1.16.0` e non vanno caricate nel prodotto riservato.
+Il pacchetto Store usa `1.0.17.0`: major non zero e quarta componente riservata allo Store impostata a zero. L'app rimane alpha.17; il numero del pacchetto non annuncia una release stabile. Le vecchie identità di collaudo possono conservare `0.1.16.0` e non vanno caricate nel prodotto riservato.
 
-Scaricare l'artifact Partner Center dell'ultima Action riuscita, estrarre lo ZIP e caricare **solo** `VirtualLP.GamePanel-1.0.16.0-x64-unsigned.msix` nella sezione Pacchetti della candidatura **Draft**. Non caricare lo ZIP dell'artifact, il pacchetto CompatibilityTest o lo ZIP portatile; non aprire l'MSIX con doppio clic per installarlo sul PC.
+Scaricare l'artifact Partner Center dell'ultima Action riuscita, estrarre lo ZIP e caricare **solo** `VirtualLP.GamePanel-1.0.17.0-x64-unsigned.msix` nella sezione Pacchetti della candidatura **Draft**. Non caricare lo ZIP dell'artifact, il pacchetto CompatibilityTest o lo ZIP portatile; non aprire l'MSIX con doppio clic per installarlo sul PC.
 
 Attendere la validazione del portale e controllare i dettagli: identità `VirtualLP.GamePanel`, editore `VirtualLP`, architettura x64 e lingua italiano (`it-IT`). La famiglia dispositivi è Windows Desktop; lasciare abilitata l'offerta per PC e non dichiarare supporto a famiglie non provate. Completare e salvare anche le eventuali scelte obbligatorie della sezione: il solo stato "Validated" di un file non garantisce che tutta la sezione sia completa.
 
-L'upload nella bozza serve a verificare i metadati. È distinto da **Submit for certification**, che resta da eseguire dopo i controlli finali. In caso di rifiuto annotare il testo esatto del portale; la validazione locale MakeAppx non sostituisce quella di Partner Center.
+L'upload nella bozza serve a verificare i metadati. È distinto da **Submit for certification**, che richiede una nuova certificazione per il codice aggiornato. In caso di rifiuto annotare il testo esatto del portale; la validazione locale MakeAppx non sostituisce quella di Partner Center.
 
 ### Elenchi dello Store / Store listings
 
@@ -96,7 +96,7 @@ BEFORE SUBMISSION: attach reproducible test instructions for the final build, in
 
 ## Prima di inviare
 
-1. Completare gestione/esportazione dei dati e messaggi sui backup LocalState: disinstallazione/reset può eliminarli. La PR MSIX di prova non completa ancora questo lavoro.
+1. Verificare [esportazione, migrazione e conservazione](DATA-PRESERVATION.md) sul PC di destinazione e conservare un archivio esterno completato. La build alpha.17 include queste funzioni; disinstallazione/reset può comunque eliminare LocalState.
 2. Usare l'identità Partner Center effettiva e un pacchetto senza CompatibilityProbe, con versione a quattro componenti e revisione `.0`.
 3. Verificare licenze e policy delle integrazioni scaricabili; verificare eventuali obblighi per piattaforme mod e contenuti di terzi.
 4. Revisionare e pubblicare la privacy; allinearla alle richieste di rete e ai dati della build finale.

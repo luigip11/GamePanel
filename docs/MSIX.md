@@ -17,9 +17,10 @@ La copia portatile continua a usare `%LOCALAPPDATA%\GamePanel`. La copia con ide
 
 `GAMEPANEL_DATA_ROOT` rimane disponibile come override diagnostico assoluto. La prova MSIX rifiuta un override presente, così non può passare usando accidentalmente la cartella di un test portatile.
 
-Non viene eseguita una migrazione automatica della libreria, dei backup o dei pacchetti scaricati dell'alpha portatile. L'app di prova parte con dati separati; i dati della copia portatile restano conservati. Prima di una distribuzione pubblica servono una procedura esplicita di migrazione/esportazione e messaggi di conservazione dei backup.
+Da alpha.17 sono disponibili esportazione ZIP verificata, importazione senza sovrascrittura e migrazione esplicita dalla cartella dati portatile, nella pagina Backup e ripristino. La copia esterna scelta dall'utente viene aggiornata dopo i nuovi backup e alla chiusura regolare; in versione Store la scelta è richiesta prima del primo backup. Originali e ultima copia esterna valida sono conservati in caso di errore.
 
-**Disinstallare o reimpostare un'app MSIX può eliminare i dati LocalState, inclusi i backup lì conservati.** Non usare questa prova come unico deposito di ripristino di giochi reali. La prova automatica usa solo dati sintetici e rimuove il proprio pacchetto alla fine. Le modifiche già applicate a cartelle di giochi esterne non vengono annullate automaticamente disinstallando l'app.
+**Disinstallazione o reset possono ancora eliminare LocalState.** La protezione consiste in un archivio già completato fuori dai dati delle app, non in un blocco della disinstallazione. Disco assente, annullamento e chiusura forzata richiedono attenzione allo stato della copia. [Procedura e limiti](DATA-PRESERVATION.md).
+
 
 ## Compilazione del pacchetto da esaminare
 
@@ -38,10 +39,10 @@ L'identità predefinita `GamePanel.Compatibility`, il publisher `CN=GamePanelCom
     -IdentityName '<Package/Identity/Name da Partner Center>' `
     -Publisher '<Package/Identity/Publisher da Partner Center>' `
     -PublisherDisplayName '<nome editore registrato>' `
-    -PackageVersion '1.0.16.0'
+    -PackageVersion '1.0.17.0'
 ```
 
-La versione Store deve avere major non zero e revisione finale `.0`. Il wrapper `build-store-msix.ps1` usa `1.0.16.0` per l'alpha.16 e l'identità riservata del titolare. Le identità di prova conservano `0.1.16.0`. Non inviare il pacchetto di prova con `CompatibilityProbe`, né descriverlo come certificato o approvato.
+La versione Store deve avere major non zero e revisione finale `.0`. Il wrapper `build-store-msix.ps1` usa `1.0.17.0` per l'alpha.17 e l'identità riservata del titolare. Le identità di prova conservano `0.1.16.0`. Non inviare il pacchetto di prova con `CompatibilityProbe`, né descriverlo come certificato o approvato.
 
 ## Collaudo Windows isolato
 
@@ -51,15 +52,15 @@ Il workflow `Windows MSIX compatibility`:
 2. Crea un pacchetto da esaminare senza probe e un secondo pacchetto `GamePanel.CompatibilityTest` con un'app di test aggiuntiva.
 3. Sul runner CI usa un certificato effimero per firmare **soltanto il secondo pacchetto** e aggiunge temporaneamente la relativa fiducia al runner. Il certificato non è un certificato di produzione, non viene consegnato e non viene installato sul PC dell'utente. La prova non disattiva Smart App Control o altre policy.
 4. Registra e attiva il pacchetto attraverso l'API Windows, verifica identità e LocalState, analisi/libreria di un EXE esterno sintetico, backup e ripristino di una configurazione esterna, rifiuto dell'updater portatile e broker Explorer.
-5. Attiva la vera finestra GamePanel dall'identità registrata e verifica la presenza dell'azione aggiornamenti nella UI.
-6. Rimuove pacchetto e certificato di prova dal runner. Gli artifact includono evidenza JSON e un pacchetto **non firmato** da esaminare, non il pacchetto firmato con la chiave effimera.
+5. Attiva la vera finestra GamePanel, espande Avanzate e verifica le azioni di aggiornamento e trasferimento dati nella UI.
+6. Disinstalla effettivamente il pacchetto, verifica che lo ZIP esterno sia immutato e lo importa da un processo non pacchettizzato; recupera la libreria e usa il backup per ripristinare una configurazione sintetica. Rimuove poi certificato e fixture del runner. Gli artifact includono evidenza JSON e un pacchetto **non firmato**, non il pacchetto firmato con la chiave effimera.
 
 Una prova fallita è un blocco reale da investigare, non un esito positivo. Anche una prova riuscita non dimostra compatibilità con giochi reali, hardware grafico specifico, tutte le cartelle protette o Smart App Control in enforcement.
 
 ## Prima della pubblicazione
 
 - Riservare identità e nome prodotto in Partner Center; verificare l'idoneità dell'account.
-- Completare migrazione/esportazione dei dati e collaudo di aggiornamento e disinstallazione con backup conservati fuori dal pacchetto.
+- Verificare la migrazione/esportazione sul PC di destinazione e conservare una copia esterna completata; il collaudo CI verifica anche disinstallazione e recupero con dati sintetici.
 - Richiedere e giustificare `runFullTrust`; eseguire Windows App Certification Kit sul pacchetto definitivo.
 - Verificare con le policy Store le funzioni di download/installazione di componenti esterni, gli asset, le licenze e l'eventuale aggiornamento del codice aggiuntivo. Non si presume che la disponibilità di un file su GitHub ne autorizzi la distribuzione o ne garantisca l'accettazione nello Store.
 - Eseguire sul pacchetto definitivo i test con i giochi dell'utente: percorso selezionato, permessi, broker Explorer, risoluzione, backup e recupero. I test dei renderer rimangono separati dalla prova MSIX.

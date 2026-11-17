@@ -124,7 +124,7 @@ internal static class UserDataTransferChecks
             using var cancellation = new CancellationTokenSource();
             Reject(() => UserDataArchive.Export(source, archive, true, cancellation.Token, new InlineProgress(_ => cancellation.Cancel())));
             Require(File.ReadAllBytes(archive).SequenceEqual(original), "Annullamento ha sostituito la copia valida.");
-            Reject(() => UserDataArchive.Export(source, archive, true, progress: new InlineProgress(_ => File.WriteAllText(Path.Combine(source, "a.txt"), "changed"))));
+            Reject(() => UserDataArchive.Export(source, archive, true, progress: new InlineProgress(_ => File.WriteAllText(Path.Combine(source, "new.txt"), "changed"))));
             Require(File.ReadAllBytes(archive).SequenceEqual(original), "Mutazione ha sostituito la copia valida.");
         });
 
@@ -136,6 +136,53 @@ internal static class UserDataTransferChecks
             File.CreateSymbolicLink(Path.Combine(source, "link.txt"), outside);
             Reject(() => UserDataArchive.Export(source, Path.Combine(Folder(), "data.zip")));
         });
+
+
+        check("Dati: importazione esplicita dalla copia portatile conserva la sorgente", () =>
+        {
+            var source = Folder(); var target = Folder();
+            Directory.CreateDirectory(Path.Combine(source, "Backups"));
+            File.WriteAllText(Path.Combine(source, "Backups", "marker.txt"), "portable");
+            UserDataArchive.ImportDirectory(source, target);
+            Require(File.ReadAllText(Path.Combine(source, "Backups", "marker.txt")) == "portable"
+                && File.ReadAllText(Path.Combine(target, "Backups", "marker.txt")) == "portable", "Migrazione ha perso la copia originale.");
+            Reject(() => UserDataArchive.ImportDirectory(source, Path.Combine(source, "nested")));
+        });
+
+        if (OperatingSystem.IsWindows() && Environment.GetEnvironmentVariable("GITHUB_ACTIONS") == "true")
+            check("Dati Windows: destinazione personale persistente, aggiornamento automatico e disco assente", () =>
+            {
+                var previous = Environment.GetEnvironmentVariable("GAMEPANEL_DATA_ROOT");
+                var source = Folder();
+                var documentFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "GamePanel-CI-" + Guid.NewGuid().ToString("N"));
+                Directory.CreateDirectory(documentFolder);
+                try
+                {
+                    Environment.SetEnvironmentVariable("GAMEPANEL_DATA_ROOT", source);
+                    File.WriteAllText(Path.Combine(source, "user.txt"), "first");
+                    Reject(() => UserDataProtection.Configure(Path.Combine(source, "unsafe.zip")));
+                    var archive = Path.Combine(documentFolder, "recovery.zip");
+                    UserDataProtection.Configure(archive);
+                    Require(UserDataProtection.Destination == archive, "Destinazione non persistita.");
+                    UserDataProtection.Preserve();
+                    File.WriteAllText(Path.Combine(source, "user.txt"), "updated");
+                    UserDataProtection.Preserve();
+                    var imported = Folder(); UserDataArchive.Import(archive, imported);
+                    Require(File.ReadAllText(Path.Combine(imported, "user.txt")) == "updated", "Copia automatica non aggiornata.");
+                    Require(!File.Exists(Path.Combine(imported, "DataProtection.json")), "Preferenza macchina importata.");
+                    File.WriteAllText(archive, "foreign-content");
+                    Reject(() => UserDataProtection.Preserve());
+                    Require(File.ReadAllText(archive) == "foreign-content", "File esterno inatteso sovrascritto.");
+                    File.Delete(archive); Directory.Delete(documentFolder);
+                    Reject(() => UserDataProtection.Preserve());
+                    Require(File.ReadAllText(Path.Combine(source, "user.txt")) == "updated", "Disco assente ha eliminato i dati interni.");
+                }
+                finally
+                {
+                    Environment.SetEnvironmentVariable("GAMEPANEL_DATA_ROOT", previous);
+                    if (Directory.Exists(documentFolder)) Directory.Delete(documentFolder, true);
+                }
+            });
 
         check("Dati: archivio vuoto valido e JSON non valido non alterano la destinazione", () =>
         {

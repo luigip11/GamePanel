@@ -25,6 +25,12 @@ I report e gli archivi esportati dall'utente possono contenere percorsi locali, 
 
 Il supporto del progetto è disponibile su [GitHub Issues](https://github.com/luigip11/GamePanel/issues). Le segnalazioni pubbliche e gli allegati pubblicati lì sono visibili ad altri utenti e soggetti alle condizioni di GitHub. Non inserire password, token o documenti di identità nelle segnalazioni.
 
+## Esportazione, importazione e copia esterna (alpha.17)
+
+La pagina Backup e ripristino può esportare i dati in uno ZIP locale e importarli dopo una reinstallazione o dalla vecchia cartella dati portatile. È possibile scegliere una destinazione esterna: l'app aggiorna l'archivio dopo i nuovi backup e alla chiusura regolare. La preferenza del percorso rimane locale e non viene trasferita tra PC.
+
+Gli ZIP possono contenere percorsi personali, copertine e copie di EXE o componenti salvati dai punti di ripristino. Non sono cifrati e non vengono inviati automaticamente online: conservali privatamente in una posizione sotto il tuo controllo. La copia esterna non viene rimossa automaticamente disinstallando GamePanel. Per rimuoverla cancellala esplicitamente dalla cartella scelta, dopo aver verificato che non sia l'unica copia necessaria.
+
 ## Conservazione e cancellazione
 
 I dati locali restano sul PC finché vengono rimossi tramite le funzioni disponibili nell'app o dall'utente. La versione portatile usa normalmente `%LOCALAPPDATA%\GamePanel`; la prova MSIX usa `%LOCALAPPDATA%\Packages\<PackageFamilyName>\LocalState\GamePanel`. Un override diagnostico può impostare un percorso diverso.

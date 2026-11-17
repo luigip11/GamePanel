@@ -31,12 +31,13 @@ Declared UI language: Italian (it-IT). Publisher display name: VirtualLP.
 No CompatibilityProbe is included. The build and compatibility tests do not replace WACK or Store review.
 
 You may upload the MSIX to the Packages section of a Partner Center DRAFT to validate its metadata.
-Uploading a draft is separate from Submit for certification. Do not submit for certification yet.
-
-SUBMISSION NOT READY: data export/migration and backup preservation, final privacy policy,
-final-package certification testing, third-party integration/license review and reviewer test
-instructions remain to be completed. Keep the Partner Center submission in Draft.
+Uploading a draft is separate from Submit for certification.
+This alpha.17 replacement includes verified data export/import, portable-data migration and
+external recovery archives updated after backups and on normal application close.
+Run the final reviewer checks and keep manual publishing enabled. Certification of version
+1.0.16.0 does not cover this new 1.0.17.0 package; it must be submitted for certification again.
+The CI proof uses a synthetic game and is not a graphics-driver or real-game stability test.
 
 See docs/MSIX.md and docs/STORE-SUBMISSION.md in the repository.
 '@ | Set-Content -LiteralPath (Join-Path $OutputDirectory 'READ-BEFORE-UPLOAD.txt') -Encoding utf8
-Write-Host 'PASS reserved Store identity and single production application; unsigned, not submission-ready.'
+Write-Host 'PASS reserved Store identity, Italian language and single application; unsigned alpha.17 replacement.'

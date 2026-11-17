@@ -9,11 +9,12 @@ namespace GamePanel.Desktop;
 internal sealed partial class MainWindow
 {
     private string _dataTransferMessage = "L'archivio contiene libreria, copertine, preferenze e backup di GamePanel. Non include una copia completa dei giochi o tutti i loro salvataggi.";
+    private bool _dataProtectionReadFailed;
     private string? ReadRecoveryDestination()
     {
-        try { return UserDataProtection.Destination; }
+        try { var destination = UserDataProtection.Destination; _dataProtectionReadFailed = false; return destination; }
         catch (Exception e) when (e is IOException or InvalidDataException or UnauthorizedAccessException or ArgumentException or InvalidOperationException)
-        { _dataTransferMessage = "Controlla la posizione della copia esterna: " + e.Message; return null; }
+        { _dataProtectionReadFailed = true; _dataTransferMessage = "Controlla la posizione della copia esterna: " + e.Message; return null; }
     }
 
     private void RenderUserDataProtection()
@@ -154,6 +155,8 @@ internal sealed partial class MainWindow
             }
             if (ReadRecoveryDestination() is null)
             {
+                if (_dataProtectionReadFailed && MessageBox.Show(this, _dataTransferMessage + "\n\nLa copia esterna non può essere aggiornata. Chiudere comunque? Non disinstallare prima di un'esportazione valida.", "GamePanel · copia esterna", MessageBoxButton.YesNo) != MessageBoxResult.Yes)
+                { e.Cancel = true; return; }
                 _closing = true; _checkUpdatesCancellation?.Cancel(); return;
             }
             e.Cancel = true;

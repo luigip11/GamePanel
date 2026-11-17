@@ -10,25 +10,19 @@ Le funzioni vengono proposte in base al gioco, al renderer e all'hardware rileva
 
 Per usare una build portabile, estrarre tutto lo ZIP in una cartella nuova e aprire **GamePanel.exe**. Runtime dell’app incluso; guide in **Docs**, licenze in **Licenses**, materiali in **Assets**. Giochi e pacchetti Remix non sono inclusi.
 
-È in preparazione una [verifica tecnica MSIX / Microsoft Store](docs/MSIX.md): non è ancora una versione firmata o pubblicata sullo Store.
+La versione Store alpha.17 usa un pacchetto MSIX da sottoporre a nuova certificazione; la certificazione di `1.0.16.0` non si estende al codice aggiornato. [Dettagli MSIX](docs/MSIX.md).
 
-## Changelog alpha.16
+## Changelog alpha.17
 
-- UI Windows aggiornata al prototipo approvato: schede libreria adattive, icone informative, ricerca con lente e ordinamento recenti/meno recenti/alfabetico oltre cinque giochi.
-- Avvia/Analizza, tab Grafica e pulsanti backup divisi a metà riga; azioni secondarie separate da un divisore.
-- Copertina selezionata nel riquadro Gioco; informazioni Windows accessibili dal pannello hardware; Gioca e Avvia il gioco a tutta larghezza.
-- Gioca nella pagina DLSS sopra la FAQ; campi di configurazione scuri, hover più visibili, icona aggiornamenti e collegamento al profilo GitHub dell'autore nel footer.
-- Hardware distinto in processore, GPU e RAM installata, con valori rilevati da Windows.
-- Schermo illustrato con risoluzione al centro, monitor e risoluzione affiancati, configurazione avanzata separata.
-- Punti di ripristino con conteggio, gioco/percorso, Esamina ed eliminazione confermata del singolo backup; spaziatura prima delle FAQ.
-- Preparazione locale UG1/UG2 Remix da cartella o ZIP verificato: anteprima, copia separata, annullamento, esportazione locale dei soli file catalogati e collegamento Originale/Remix. [Guida](docs/REMIX-PACKAGES.md).
-- Preparazione degli allegati per GitHub Releases in parti inferiori a 2 GiB, manifest SHA-256 e ricostruzione locale verificata dello ZIP; nessun upload automatico.
-- UG2 conserva FrontB.lzc dell'utente; Smol è un componente separato. Le configurazioni personalizzate vengono segnalate e conservate. Il download pubblico GamePanel resta disabilitato finché i pacchetti distribuibili non sono pubblicati.
-- Preset ReShade generali Originale, Nitido, Bilanciato e Cinema per EXE **x86 Direct3D 9** compatibili, con componente ufficiale verificato, anteprima e ripristino. Nessuna installazione automatica sopra Remix. [Immagine e HDR](docs/IMAGE-AND-HDR.md).
-- Pagina HDR separata: rilevamento Windows in sola lettura del colore avanzato e accesso alle impostazioni HDR, distinguendo HDR nativo, Auto HDR e filtri SDR.
-- Metadati versione EXE conservati nella libreria quando disponibili; nessuna patch dedotta dal nome del file.
+- Esportazione e importazione ZIP verificate di libreria, copertine, preferenze e punti di ripristino.
+- Importazione esplicita dalla cartella dati della copia portatile, con sorgente conservata e blocco dei conflitti.
+- Copia esterna configurabile, aggiornata dopo i nuovi backup e alla chiusura regolare; scelta richiesta prima del primo backup Store.
+- Conservazione dell'ultimo archivio valido se esportazione, disco esterno o annullamento impediscono l'aggiornamento.
+- Avvisi su disinstallazione/reset MSIX, chiusura forzata, archivi privati e percorsi dei giochi da ricollegare.
+- Pacchetto Store `VirtualLP.GamePanel` versione `1.0.17.0`, lingua italiana e aggiornamenti tramite canale Store.
+- Collaudo Windows esteso a disinstallazione effettiva e recupero di libreria e backup da una copia esterna con dati sintetici.
 
-Le copie preparate richiedono una prova nel gioco. Il collaudo di una configurazione su RTX 5080 Laptop non garantisce prestazioni o stabilità su altri PC. Il download pubblico delle mod è distinto dall'importazione locale e richiede pacchetti ospitati, integrità verificata e condizioni di distribuzione rispettate.
+[Guida a conservazione, migrazione e recupero dei dati](docs/DATA-PRESERVATION.md).
 
 ## Schermate
 

@@ -100,6 +100,17 @@ public static class MsixActivation {
         ConvertTo-Json | Set-Content -LiteralPath (Join-Path $output 'installation-ui.json') -Encoding utf8
 
     # Verify the real data controls in the installed application.
+    $advanced = $window.FindFirst([Windows.Automation.TreeScope]::Descendants,
+        [Windows.Automation.PropertyCondition]::new([Windows.Automation.AutomationElement]::AutomationIdProperty, 'AdvancedNavigation'))
+    if (-not $advanced) { throw 'Advanced navigation missing from real packaged UI.' }
+    $advanced.GetCurrentPattern([Windows.Automation.ExpandCollapsePattern]::Pattern).Expand()
+    $deadline = [DateTime]::UtcNow.AddSeconds(20)
+    do {
+        $backupNav = $window.FindFirst([Windows.Automation.TreeScope]::Descendants,
+            [Windows.Automation.PropertyCondition]::new([Windows.Automation.AutomationElement]::AutomationIdProperty, 'BackupsPage'))
+        if ($backupNav) { break }
+        Start-Sleep -Milliseconds 200
+    } while ([DateTime]::UtcNow -lt $deadline)
     $backupNav = $window.FindFirst([Windows.Automation.TreeScope]::Descendants,
         [Windows.Automation.PropertyCondition]::new([Windows.Automation.AutomationElement]::AutomationIdProperty, 'BackupsPage'))
     if (-not $backupNav) { throw 'Backup navigation missing from real packaged UI.' }
