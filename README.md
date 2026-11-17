@@ -6,9 +6,9 @@ Le funzioni vengono proposte in base al gioco, al renderer e all'hardware rileva
 
 ## Download
 
-**[Scarica GamePanel alpha.17 per Windows x64](https://github.com/luigip11/GamePanel/actions/runs/44164320240/artifacts/14364058976)** · [Build e controlli](https://github.com/luigip11/GamePanel/actions/runs/44164320240).
+**[Scarica GamePanel alpha.17 per Windows x64](https://github.com/luigip11/GamePanel/actions/runs/44167723312/artifacts/14365599354)** · [Build e controlli](https://github.com/luigip11/GamePanel/actions/runs/44167723312).
 
-[Pacchetto MSIX 1.0.17.0 per Partner Center](https://github.com/luigip11/GamePanel/actions/runs/44164320438/artifacts/14366000393): da caricare nel portale per nuova certificazione, non da installare localmente. Gli artifact richiedono accesso a GitHub e hanno una scadenza indicata nella pagina di download.
+[Pacchetto MSIX 1.0.17.0 per Partner Center](https://github.com/luigip11/GamePanel/actions/runs/44167723550/artifacts/14365439632): da caricare nel portale per nuova certificazione, non da installare localmente. Gli artifact richiedono accesso a GitHub e hanno una scadenza indicata nella pagina di download.
 
 Per usare una build portabile, estrarre tutto lo ZIP in una cartella nuova e aprire **GamePanel.exe**. Runtime dell’app incluso; guide in **Docs**, licenze in **Licenses**, materiali in **Assets**. Giochi e pacchetti Remix non sono inclusi.
 
@@ -28,7 +28,7 @@ La versione Store alpha.17 usa un pacchetto MSIX da sottoporre a nuova certifica
 
 ## Schermate
 
-[Schermate della build alpha.17, acquisite dall'app con dati dimostrativi](https://github.com/luigip11/GamePanel/actions/runs/44164320240/artifacts/14364717980). Le immagini statiche sotto documentano la precedente alpha.16.
+[Schermate della build alpha.17, acquisite dall'app con dati dimostrativi](https://github.com/luigip11/GamePanel/actions/runs/44167723312/artifacts/14366322203). Le immagini statiche sotto documentano la precedente alpha.16.
 
 Le anteprime mostrano la UI finale di alpha.16: Libreria, Gioco e hardware, Grafica, DLSS, Schermo, HDR e Backup.
 

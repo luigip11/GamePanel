@@ -1,12 +1,12 @@
 # Alpha.17 — risultati finali Windows
 
-Codice verificato: `85e3901fa803e53bc4af6809c68dc61abd6805a2`.
+Codice verificato: `e13691acd34564805348762b65d736bd176a5959`.
 
-- [MSIX, run 10](https://github.com/luigip11/GamePanel/actions/runs/44164320438): riuscito; 281/281 controlli core, zero saltati/falliti.
+- [MSIX, run 12](https://github.com/luigip11/GamePanel/actions/runs/44167723550): riuscito; 281/281 controlli core, zero saltati/falliti.
 - Prova sulla finestra reale: backup automatico nel percorso dei profili, copia esterna aggiornata dopo l'operazione e alla chiusura, archivio recuperabile.
 - Prova di disinstallazione effettiva: ZIP esterno immutato, importazione da processo senza identità MSIX, libreria recuperata e backup usato per ripristinare una configurazione sintetica.
-- [Build portatile, run 98](https://github.com/luigip11/GamePanel/actions/runs/44164320240): riuscita, inclusi controlli desktop esistenti.
-- [Report JSON](https://github.com/luigip11/GamePanel/actions/runs/44164320438/artifacts/14365017450) e [MSIX 1.0.17.0](https://github.com/luigip11/GamePanel/actions/runs/44164320438/artifacts/14366000393).
+- [Build portatile, run 100](https://github.com/luigip11/GamePanel/actions/runs/44167723312): riuscita, inclusi controlli desktop esistenti.
+- [Report JSON](https://github.com/luigip11/GamePanel/actions/runs/44167723550/artifacts/14365808763) e [MSIX 1.0.17.0](https://github.com/luigip11/GamePanel/actions/runs/44167723550/artifacts/14365439632).
 
 Questi risultati non sono una certificazione Microsoft della nuova build, un test di Smart App Control in enforcement o un collaudo con giochi reali. Il pacchetto per Partner Center resta non firmato. Nessuna policy/certificato è stato modificato sul PC dell'utente.
 

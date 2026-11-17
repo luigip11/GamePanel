@@ -98,9 +98,9 @@ Optional graphics functions still require compatible games/renderers/hardware an
 
 ## Pacchetto sostitutivo e risultati
 
-- [Scarica lo ZIP per Partner Center](https://github.com/luigip11/GamePanel/actions/runs/44164320438/artifacts/14366000393) e carica soltanto `VirtualLP.GamePanel-1.0.17.0-x64-unsigned.msix` contenuto al suo interno.
-- [Verifica MSIX Windows](https://github.com/luigip11/GamePanel/actions/runs/44164320438): 281/281 controlli, prova sulla finestra reale, disinstallazione e recupero completati.
-- [Build portatile e verifiche desktop](https://github.com/luigip11/GamePanel/actions/runs/44164320240): completate.
+- [Scarica lo ZIP per Partner Center](https://github.com/luigip11/GamePanel/actions/runs/44167723550/artifacts/14365439632) e carica soltanto `VirtualLP.GamePanel-1.0.17.0-x64-unsigned.msix` contenuto al suo interno.
+- [Verifica MSIX Windows](https://github.com/luigip11/GamePanel/actions/runs/44167723550): 281/281 controlli, prova sulla finestra reale, disinstallazione e recupero completati.
+- [Build portatile e verifiche desktop](https://github.com/luigip11/GamePanel/actions/runs/44167723312): completate.
 - La certificazione di `1.0.16.0` non copre questa build. Caricare il pacchetto in un nuovo invio/aggiornamento e richiedere una nuova certificazione, mantenendo la pubblicazione manuale. Non pubblicare la vecchia build per sbloccare il portale.
 - Se l'invio già certificato non è modificabile, controllare i comandi disponibili nella panoramica/nel menu dell'invio. I comandi dipendono dallo stato: non eliminare il prodotto o il nome riservato. [Controlli degli invii Microsoft](https://learn.microsoft.com/en-us/windows/apps/publish/publish-your-app/msix/app-submission-control).
 
