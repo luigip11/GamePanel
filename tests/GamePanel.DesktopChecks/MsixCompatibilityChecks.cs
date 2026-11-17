@@ -13,6 +13,7 @@ internal static class MsixCompatibilityChecks
         reportPath = Path.GetFullPath(reportPath);
         var checks = new List<string>();
         string? data = null, family = null;
+        string? recoveryArchive = null, recoveryHash = null, recoverySnapshot = null;
         try
         {
             family = AppDistribution.PackageFamilyName;
@@ -48,6 +49,12 @@ internal static class MsixCompatibilityChecks
             Require(File.ReadAllText(config) == original, "External configuration restore failed.");
             File.WriteAllText(Path.Combine(game, "msix-external-write.txt"), "GamePanel MSIX external file verified");
             checks.Add("Backup and restore outside the package, with data in LocalState");
+            recoveryArchive = Path.Combine(game, "GamePanel-preserved.zip");
+            UserDataArchive.Export(data, recoveryArchive);
+            recoveryHash = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(recoveryArchive)));
+            recoverySnapshot = snapshot.Id;
+            UserDataArchive.Verify(recoveryArchive);
+            checks.Add("Verified external library and backup archive before uninstall");
 
             Exception? failure = null;
             var thread = new Thread(() =>
@@ -91,10 +98,34 @@ internal static class MsixCompatibilityChecks
             var pending = reportPath + ".tmp";
             File.WriteAllText(pending, JsonSerializer.Serialize(new
             { SchemaVersion = 1, Success = success, PackageFamilyName = family, DataRoot = data, Checks = checks,
-                ExternalFixture = fixturePath, Error = error, RealGamesTested = false, SmartAppControlTested = false,
+                ExternalFixture = fixturePath, RecoveryArchive = recoveryArchive, RecoverySha256 = recoveryHash, RecoverySnapshot = recoverySnapshot, Error = error, RealGamesTested = false, SmartAppControlTested = false,
                 ProductionSigned = false }, new JsonSerializerOptions { WriteIndented = true }));
             File.Move(pending, reportPath);
         }
+    }
+
+    public static int RecoverAfterUninstall(string archive, string root, string fixture, string snapshot, string expectedHash)
+    {
+        try
+        {
+            Require(Environment.GetEnvironmentVariable("GITHUB_ACTIONS") == "true", "Recovery probe is confined to disposable CI.");
+            Require(!AppDistribution.HasPackageIdentity, "Recovery proof must run outside the uninstalled package.");
+            fixture = Path.GetFullPath(fixture);
+            Require(Path.GetFileName(fixture) == "speed2.exe", "Synthetic fixture required.");
+            Require(Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(fixture))).Equals(expectedHash, StringComparison.OrdinalIgnoreCase), "Fixture hash mismatch.");
+            UserDataArchive.Import(archive, root);
+            var library = new GameLibrary(Path.Combine(root, "Library")).Load();
+            Require(library.Games.Any(g => g.ExecutablePath == fixture), "Library not recovered after uninstall.");
+            var backups = new BackupService(Path.Combine(root, "Backups"), _ => false);
+            Require(backups.List(fixture).Any(s => s.Id == snapshot), "Backup not recovered after uninstall.");
+            var config = Path.Combine(Path.GetDirectoryName(fixture)!, "ReShade.ini");
+            File.Delete(config);
+            backups.Restore(fixture, snapshot);
+            Require(File.ReadAllText(config) == "[Fixture]\nValue=original\n", "Recovered snapshot could not restore configuration.");
+            Console.WriteLine("PASS actual MSIX uninstall: external archive, library and usable configuration backup recovered.");
+            return 0;
+        }
+        catch (Exception e) { Console.Error.WriteLine(e); return 1; }
     }
     private static void Require(bool value, string message) { if (!value) throw new InvalidOperationException(message); }
 }

@@ -1,7 +1,7 @@
 param(
     [Parameter(Mandatory = $true)][string]$PackageDirectory,
     [string]$OutputDirectory = './artifacts/msix-store',
-    [string]$PackageVersion = '1.0.16.0'
+    [string]$PackageVersion = '1.0.17.0'
 )
 $ErrorActionPreference = 'Stop'
 if (([version]$PackageVersion).Major -lt 1) { throw 'The Store package version must have a nonzero major component.' }

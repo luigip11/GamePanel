@@ -6,6 +6,7 @@ using System.Windows.Media.Imaging;
 if (args.Length == 2 && args[0] == "--explorer-probe") return ExplorerLaunchChecks.Run(args[1]);
 if (args.Length == 2 && args[0] == "--documentation-preview") return DocumentationPreview.Run(args[1]);
 if (args.Length == 4 && args[0] == "--msix-probe") return MsixCompatibilityChecks.Run(args[1], args[2], args[3]);
+if (args.Length == 6 && args[0] == "--recover-user-data") return MsixCompatibilityChecks.RecoverAfterUninstall(args[1], args[2], args[3], args[4], args[5]);
 
 // Independent golden DDS samples exercise the actual WPF preview shipped by GamePanel.
 // No game, ASI, downloaded executable, or native image codec is loaded.

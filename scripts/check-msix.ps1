@@ -1,7 +1,8 @@
 param(
     [Parameter(Mandatory = $true)][string]$MsixPath,
     [Parameter(Mandatory = $true)][string]$GraphicsFixturePath,
-    [string]$OutputDirectory = './artifacts/msix-proof'
+    [string]$OutputDirectory = './artifacts/msix-proof',
+    [string]$RecoveryProbePath = './artifacts/msix-probe/GamePanel.DesktopChecks.exe'
 )
 $ErrorActionPreference = 'Stop'
 # Test certificate trust is confined to the disposable CI runner and removed in finally.
@@ -12,11 +13,13 @@ $output = [IO.Path]::GetFullPath($OutputDirectory)
 $msix = (Resolve-Path -LiteralPath $MsixPath).Path
 $fixture = (Resolve-Path -LiteralPath $GraphicsFixturePath).Path
 $hash = (Get-FileHash -LiteralPath $fixture -Algorithm SHA256).Hash
+$recoveryProbe = (Resolve-Path -LiteralPath $RecoveryProbePath).Path
 $testRoot = Join-Path $env:RUNNER_TEMP ('GamePanelMsixProof-' + [Guid]::NewGuid().ToString('N'))
 [IO.Directory]::CreateDirectory($testRoot) | Out-Null
 $external = Join-Path $testRoot 'speed2.exe'
 Copy-Item -LiteralPath $fixture -Destination $external
 $result = Join-Path $testRoot 'result.json'
+$restoredData = Join-Path $env:RUNNER_TEMP ('GamePanelAfterUninstall-' + [Guid]::NewGuid().ToString('N'))
 $certificate = $null; $trusted = $null; $installed = $null; $activated = @()
 $oldData = [Environment]::GetEnvironmentVariable('GAMEPANEL_DATA_ROOT')
 [Environment]::SetEnvironmentVariable('GAMEPANEL_DATA_ROOT', $null)
@@ -95,6 +98,38 @@ public static class MsixActivation {
         SyntheticFixtureSha256 = $hash; ProductionSigned = $false; SmartAppControlTested = $false;
         Note = 'Temporary test trust on disposable CI runner; no real games or Store certification.' } |
         ConvertTo-Json | Set-Content -LiteralPath (Join-Path $output 'installation-ui.json') -Encoding utf8
+
+    # Verify the real data controls in the installed application.
+    $backupNav = $window.FindFirst([Windows.Automation.TreeScope]::Descendants,
+        [Windows.Automation.PropertyCondition]::new([Windows.Automation.AutomationElement]::AutomationIdProperty, 'BackupsPage'))
+    if (-not $backupNav) { throw 'Backup navigation missing from real packaged UI.' }
+    $backupNav.GetCurrentPattern([Windows.Automation.InvokePattern]::Pattern).Invoke()
+    $deadline = [DateTime]::UtcNow.AddSeconds(20)
+    do {
+        $exportData = $window.FindFirst([Windows.Automation.TreeScope]::Descendants,
+            [Windows.Automation.PropertyCondition]::new([Windows.Automation.AutomationElement]::AutomationIdProperty, 'ExportUserData'))
+        if ($exportData) { break }
+        Start-Sleep -Milliseconds 200
+    } while ([DateTime]::UtcNow -lt $deadline)
+    foreach ($automationId in @('ExportUserData', 'ImportUserData', 'MigratePortableData', 'ConfigureExternalRecovery')) {
+        $control = $window.FindFirst([Windows.Automation.TreeScope]::Descendants,
+            [Windows.Automation.PropertyCondition]::new([Windows.Automation.AutomationElement]::AutomationIdProperty, $automationId))
+        if (-not $control) { throw ('Packaged data transfer control missing: ' + $automationId) }
+    }
+    $process = Get-Process -Id $appPid -ErrorAction SilentlyContinue
+    if ($process) { $process.CloseMainWindow() | Out-Null; if (-not $process.WaitForExit(10000)) { $process.Kill(); $process.WaitForExit() } }
+    $archive = Join-Path $testRoot 'GamePanel-preserved.zip'
+    if (-not (Test-Path -LiteralPath $archive) -or (Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash -ne $proof.RecoverySha256) { throw 'External recovery archive missing before uninstall.' }
+    Remove-AppxPackage -Package $installed.PackageFullName
+    if (Get-AppxPackage -Name 'GamePanel.CompatibilityTest') { throw 'Package remained registered after uninstall.' }
+    $installed = $null
+    if (-not (Test-Path -LiteralPath $archive) -or (Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash -ne $proof.RecoverySha256) { throw 'Uninstall removed or changed the external recovery archive.' }
+    & $recoveryProbe --recover-user-data $archive $restoredData $external $proof.RecoverySnapshot $hash
+    if ($LASTEXITCODE -ne 0) { throw 'Actual post-uninstall data recovery failed.' }
+    [ordered]@{ Success = $true; PackageActuallyUninstalled = $true; ExternalArchiveUnchanged = $true;
+        LibraryRecovered = $true; BackupRecoveredAndUsed = $true; DataControlsPresent = $true;
+        SmartAppControlTested = $false; RealGamesTested = $false } |
+        ConvertTo-Json | Set-Content -LiteralPath (Join-Path $output 'uninstall-recovery.json') -Encoding utf8
     Write-Host 'PASS installed MSIX, package identity/data, external backup/restore, Explorer broker, update gate and actual WPF activation.'
 } catch {
     [ordered]@{ Success = $false; Error = $_.ToString(); ProductionSigned = $false; SmartAppControlTested = $false } |
@@ -115,4 +150,5 @@ public static class MsixActivation {
     if ($certificate) { Remove-Item -LiteralPath ('Cert:\CurrentUser\My\' + $certificate.Thumbprint) -ErrorAction Continue }
     [Environment]::SetEnvironmentVariable('GAMEPANEL_DATA_ROOT', $oldData)
     if (Test-Path -LiteralPath $testRoot) { Remove-Item -LiteralPath $testRoot -Recurse -Force }
+    if (Test-Path -LiteralPath $restoredData) { Remove-Item -LiteralPath $restoredData -Recurse -Force }
 }

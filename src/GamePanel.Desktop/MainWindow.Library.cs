@@ -46,6 +46,13 @@ internal sealed partial class MainWindow
     private void RenderLibrary()
     {
         _libraryVariantGroups = ReadLibraryVariantGroups();
+        if (AppDistribution.HasPackageIdentity && ReadRecoveryDestination() is null)
+        {
+            Card("Proteggi la tua libreria", "I dati interni dell'app Store possono essere eliminati con disinstallazione o reset. In Backup e ripristino puoi scegliere una copia esterna e importare i dati della copia portatile.");
+            var protect = Button("Apri protezione dati e backup", (_, _) => { _page = 3; Render(); _pageScroll.ScrollToTop(); });
+            SmallAction(protect, "Apri protezione dati e backup", "backup"); protect.IsEnabled = !_busy;
+            protect.Margin = new Thickness(0, 0, 0, 20); _content.Children.Add(protect);
+        }
         var hero = new Grid { Margin = new Thickness(0, 0, 0, 22) };
         hero.ColumnDefinitions.Add(new ColumnDefinition()); hero.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
         var intro = new StackPanel(); intro.Children.Add(Text("La tua libreria.", 32, Ink, FontWeights.Bold));
