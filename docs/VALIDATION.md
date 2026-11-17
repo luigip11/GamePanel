@@ -1,3 +1,19 @@
+# Alpha.17 — risultati finali Windows
+
+Codice verificato: `85e3901fa803e53bc4af6809c68dc61abd6805a2`.
+
+- [MSIX, run 10](https://github.com/luigip11/GamePanel/actions/runs/44164320438): riuscito; 281/281 controlli core, zero saltati/falliti.
+- Prova sulla finestra reale: backup automatico nel percorso dei profili, copia esterna aggiornata dopo l'operazione e alla chiusura, archivio recuperabile.
+- Prova di disinstallazione effettiva: ZIP esterno immutato, importazione da processo senza identità MSIX, libreria recuperata e backup usato per ripristinare una configurazione sintetica.
+- [Build portatile, run 98](https://github.com/luigip11/GamePanel/actions/runs/44164320240): riuscita, inclusi controlli desktop esistenti.
+- [Report JSON](https://github.com/luigip11/GamePanel/actions/runs/44164320438/artifacts/14365017450) e [MSIX 1.0.17.0](https://github.com/luigip11/GamePanel/actions/runs/44164320438/artifacts/14366000393).
+
+Questi risultati non sono una certificazione Microsoft della nuova build, un test di Smart App Control in enforcement o un collaudo con giochi reali. Il pacchetto per Partner Center resta non firmato. Nessuna policy/certificato è stato modificato sul PC dell'utente.
+
+[Guida dati](DATA-PRESERVATION.md) · [Aggiornamento Store](STORE-SUBMISSION.md)
+
+---
+
 # Alpha.17 — conservazione dati e aggiornamento Store
 
 Il codice aggiunge ZIP verificati, importazione senza sovrascrittura, migrazione esplicita dalla cartella dati portatile e copia esterna aggiornata dopo i backup e alla chiusura regolare. La versione Store è `1.0.17.0`; non eredita la certificazione di `1.0.16.0`.

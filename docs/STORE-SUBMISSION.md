@@ -82,17 +82,27 @@ Viste proposte: Libreria, Gioco/hardware, Schermo e risoluzione, Backup. Per DLS
 
 GamePanel is an existing WPF desktop utility packaged as a classic desktop application. It needs runFullTrust to inspect executable files explicitly selected by the user, read and manage supported configuration files in user-selected game folders, create and restore configuration backups, detect local hardware and displays, and launch the selected installed game. Operations run at the current user's permissions; the package does not request elevation, install drivers or Windows services, or change Windows security policies. The MSIX build blocks the portable self-updater and uses the package distribution channel for app updates.
 
-## Notes for certification (bozza inglese da completare)
+## Notes for certification — aggiornamento 1.0.17.0
 
-GamePanel is an Italian-language desktop utility for games already installed by the user. No GamePanel account or login is required. No commercial game executable or Remix game archive is included in the app package.
+Testo inglese da copiare nelle Informazioni aggiuntive sui test, dopo aver verificato che la candidatura contenga questo pacchetto:
 
-Start with the Library page, use Importa gioco to select an installed desktop game's EXE, then Analizza to inspect the selected copy. Inspection reads local files and does not launch the executable. Use the Game page to view detected information and the Screen page to select a display/resolution; configuration changes are offered only for supported profiles. Backup and restore cover the files managed by the relevant integration, not every file in a game or all save data.
+GamePanel 1.0.17.0 (alpha.17) replaces 1.0.16.0. This update adds local data export/import, explicit migration from the portable data directory, and an external recovery archive to preserve library metadata and configuration backups across MSIX reset/uninstall.
 
-Online cover search contacts Wikipedia/Wikimedia using the entered search text. Optional graphics integrations may download verified components from third-party sources or import local packages. These functions require internet access where indicated and compatible games/hardware; please review the declared integration workflows, not assume universal DLSS/HDR support. Games and optional dependencies must be legally available to the tester.
+The UI is Italian and no login is required. Games are not included. The new data controls are available without a selected game: expand Avanzate, open Backup e ripristino, choose Scegli copia esterna and select a ZIP in Documents or another user folder outside AppData and Temp. Confirm that the archive completes. Esporta dati e backup creates an independent ZIP; Importa archivio dati verifies and imports it without overwriting different existing files. An empty library can also be exported/imported. For a nonempty library, import an installed game already available in the test environment; no commercial game download or execution is needed to inspect the EXE and library metadata.
 
-The package uses runFullTrust for the desktop file/configuration and launch operations described above. The package does not install drivers or services or disable system security protections. App self-replacement through the portable GitHub updater is disabled for packaged installations.
+Store operations that create backups or apply/recover managed profiles require the external location to be selected first. Backup data is preserved before continuing when a baseline is created; the archive is refreshed after managed profile changes and on normal application close. If the external destination is unavailable, the app retains internal data and reports the failure. A forced process termination cannot refresh the archive. Windows reset/uninstall can still remove internal LocalState; users must retain the completed external ZIP.
 
-BEFORE SUBMISSION: attach reproducible test instructions for the final build, including an accessible, redistributable fixture or a supported legally available title for configuration workflows. CI has verified package identity, external file inspection and backup/restore, Explorer launch and WPF activation with a synthetic fixture; this does not replace testing the final Store package or third-party renderers.
+This update does not introduce new online services or additional restricted capabilities. runFullTrust remains necessary for user-selected desktop file inspection, supported configuration management, backups and game launch. No drivers/services, elevation request or Windows security policy changes are introduced. The package disables the portable updater; Store/package updates remain separate from optional third-party graphics components.
+
+Optional graphics functions still require compatible games/renderers/hardware and may download clearly presented third-party components. DLSS/HDR support is not universal. Automated tests use synthetic fixtures: Windows CI verified data transfer, actual WPF profile/close preservation and recovery of library plus a usable configuration backup after actually uninstalling the test MSIX. They do not claim gameplay or graphics-driver stability testing.
+
+## Pacchetto sostitutivo e risultati
+
+- [Scarica lo ZIP per Partner Center](https://github.com/luigip11/GamePanel/actions/runs/44164320438/artifacts/14366000393) e carica soltanto `VirtualLP.GamePanel-1.0.17.0-x64-unsigned.msix` contenuto al suo interno.
+- [Verifica MSIX Windows](https://github.com/luigip11/GamePanel/actions/runs/44164320438): 281/281 controlli, prova sulla finestra reale, disinstallazione e recupero completati.
+- [Build portatile e verifiche desktop](https://github.com/luigip11/GamePanel/actions/runs/44164320240): completate.
+- La certificazione di `1.0.16.0` non copre questa build. Caricare il pacchetto in un nuovo invio/aggiornamento e richiedere una nuova certificazione, mantenendo la pubblicazione manuale. Non pubblicare la vecchia build per sbloccare il portale.
+- Se l'invio già certificato non è modificabile, controllare i comandi disponibili nella panoramica/nel menu dell'invio. I comandi dipendono dallo stato: non eliminare il prodotto o il nome riservato. [Controlli degli invii Microsoft](https://learn.microsoft.com/en-us/windows/apps/publish/publish-your-app/msix/app-submission-control).
 
 ## Prima di inviare
 
@@ -101,7 +111,7 @@ BEFORE SUBMISSION: attach reproducible test instructions for the final build, in
 3. Verificare licenze e policy delle integrazioni scaricabili; verificare eventuali obblighi per piattaforme mod e contenuti di terzi.
 4. Revisionare e pubblicare la privacy; allinearla alle richieste di rete e ai dati della build finale.
 5. Eseguire WACK e prove sul pacchetto definitivo, incluse disinstallazione/aggiornamento e conservazione dei backup.
-6. Completare scheda, IARC, immagini, giustificazione capability e istruzioni riproducibili per i revisori. Rimuovere la nota BEFORE SUBMISSION dopo averla realmente soddisfatta.
+6. Conservare e verificare scheda, IARC, immagini e motivazione capability del prodotto; aggiornare le note di test e le novità per alpha.17.
 7. Esaminare il riepilogo con il titolare prima di premere Submit for certification. Tenere la pubblicazione manuale.
 
 ## Fonti Microsoft
