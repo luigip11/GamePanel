@@ -29,7 +29,7 @@ I percorsi dei giochi restano originali: se li hai spostati, ricollegali e riana
 
 Puoi esportare dalla nuova copia portatile e importare lo ZIP nello Store. Se la vecchia copia non si apre, usa **Importa dati della copia portatile** e scegli la cartella dati, normalmente `%LOCALAPPDATA%\\GamePanel`, contenente `Library` e/o `Backups`. Non scegliere la cartella di GamePanel.exe o del gioco.
 
-La sorgente viene letta e conservata: nessun file originale è spostato o eliminato. Dopo l'importazione configura una copia esterna per lo Store. La vecchia preferenza di destinazione non viene trasferita: potrebbe riferirsi a un altro PC/disco.
+La sorgente viene letta e conservata: nessun file originale è spostato o eliminato. Dopo l'importazione configura una copia esterna per lo Store. La vecchia preferenza di destinazione non viene trasferita: potrebbe riferirsi a un altro PC/disco. Una nuova destinazione automatica non può essere uno ZIP già esistente: prima importa i dati precedenti, poi scegli un nome nuovo. Se vuoi recuperare dallo ZIP attualmente configurato nell'app, creane prima una copia indipendente con Esplora file e importa quella. La sorgente completa resta così conservata anche in caso di interruzione del trasferimento.
 
 ## Contenuto e riservatezza
 

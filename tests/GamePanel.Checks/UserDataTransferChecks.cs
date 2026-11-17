@@ -162,7 +162,13 @@ internal static class UserDataTransferChecks
                     File.WriteAllText(Path.Combine(source, "user.txt"), "first");
                     Reject(() => UserDataProtection.Configure(Path.Combine(source, "unsafe.zip")));
                     var archive = Path.Combine(documentFolder, "recovery.zip");
+                    var previousArchive = Path.Combine(documentFolder, "previous-installation.zip");
+                    UserDataArchive.Export(source, previousArchive);
+                    var originalArchive = File.ReadAllBytes(previousArchive);
+                    Reject(() => UserDataProtection.Configure(previousArchive));
+                    Require(File.ReadAllBytes(previousArchive).SequenceEqual(originalArchive), "La selezione della vecchia copia l'ha sovrascritta.");
                     UserDataProtection.Configure(archive);
+                    Reject(() => UserDataArchive.Import(archive, source));
                     Require(UserDataProtection.Destination == archive, "Destinazione non persistita.");
                     UserDataProtection.Preserve();
                     File.WriteAllText(Path.Combine(source, "user.txt"), "updated");
@@ -173,7 +179,7 @@ internal static class UserDataTransferChecks
                     File.WriteAllText(archive, "foreign-content");
                     Reject(() => UserDataProtection.Preserve());
                     Require(File.ReadAllText(archive) == "foreign-content", "File esterno inatteso sovrascritto.");
-                    File.Delete(archive); Directory.Delete(documentFolder);
+                    File.Delete(archive); File.Delete(previousArchive); Directory.Delete(documentFolder);
                     Reject(() => UserDataProtection.Preserve());
                     Require(File.ReadAllText(Path.Combine(source, "user.txt")) == "updated", "Disco assente ha eliminato i dati interni.");
                 }

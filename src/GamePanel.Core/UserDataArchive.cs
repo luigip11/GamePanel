@@ -114,6 +114,7 @@ public static class UserDataArchive
     {
         dataRoot = Path.GetFullPath(dataRoot); archivePath = Path.GetFullPath(archivePath);
         ValidateExternalPath(dataRoot, archivePath);
+        UserDataProtection.RequireIndependentImportSource(dataRoot, archivePath);
         Directory.CreateDirectory(dataRoot); GuardPath(dataRoot);
         using var file = new FileStream(archivePath, FileMode.Open, FileAccess.Read, FileShare.Read);
         using var zip = new ZipArchive(file, ZipArchiveMode.Read);

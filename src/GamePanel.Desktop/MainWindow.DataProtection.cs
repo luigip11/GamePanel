@@ -52,7 +52,7 @@ internal sealed partial class MainWindow
     {
         var dialog = new SaveFileDialog { Title = "Scegli la copia ZIP esterna, conservata anche dopo la disinstallazione",
             Filter = "Archivio dati GamePanel (*.zip)|*.zip", DefaultExt = ".zip", AddExtension = true,
-            FileName = "GamePanel-recupero.zip", InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), OverwritePrompt = true };
+            FileName = "GamePanel-recupero-" + DateTime.Now.ToString("yyyyMMdd-HHmmss") + ".zip", InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), OverwritePrompt = true };
         if (dialog.ShowDialog(this) != true) return false;
         try
         {
