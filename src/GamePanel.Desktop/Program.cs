@@ -324,6 +324,7 @@ internal sealed partial class MainWindow : Window
         Action<T> completed, string message)
     {
         if (_busy) return;
+        _externalCopyFailed = false;
         _busy = true; _path.IsReadOnly = true; _select.IsEnabled = false; _analyze.IsEnabled = false; _export.IsEnabled = false;
         _cancel.Content = "Interrompi operazione";
         _cancel.Visibility = Visibility.Visible; _status.Text = message; _restorePlan = null;
@@ -334,7 +335,7 @@ internal sealed partial class MainWindow : Window
         {
             var token = _cancellation.Token;
             var result = await Task.Run(() => work(token, progress), token);
-            if (!_closing) { completed(result); _status.Text = "Operazione backup completata"; }
+            if (!_closing) { completed(result); _status.Text = _externalCopyFailed ? "Dati interni conservati · copia esterna non aggiornata" : "Operazione backup completata"; }
         }
         catch (OperationCanceledException)
         {

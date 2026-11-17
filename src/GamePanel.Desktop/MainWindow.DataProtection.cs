@@ -10,6 +10,7 @@ internal sealed partial class MainWindow
 {
     private string _dataTransferMessage = "L'archivio contiene libreria, copertine, preferenze e backup di GamePanel. Non include una copia completa dei giochi o tutti i loro salvataggi.";
     private bool _dataProtectionReadFailed;
+    private bool _externalCopyFailed;
     private string? ReadRecoveryDestination()
     {
         try { var destination = UserDataProtection.Destination; _dataProtectionReadFailed = false; return destination; }
@@ -74,14 +75,19 @@ internal sealed partial class MainWindow
 
     private string PreserveData(CancellationToken token, IProgress<BackupProgress> progress)
     {
-        if (ReadRecoveryDestination() is null) return AppDistribution.HasPackageIdentity ? "ATTENZIONE: copia esterna non configurata." : "";
+        _externalCopyFailed = false;
+        if (ReadRecoveryDestination() is null)
+        {
+            _externalCopyFailed = AppDistribution.HasPackageIdentity;
+            return _externalCopyFailed ? "ATTENZIONE: copia esterna non configurata." : "";
+        }
         try
         {
             var result = UserDataProtection.Preserve(token, progress);
             return $"Copia esterna aggiornata e verificata: {result.Files} file.";
         }
         catch (Exception e) when (e is IOException or InvalidDataException or UnauthorizedAccessException or ArgumentException or InvalidOperationException or OperationCanceledException)
-        { return "ATTENZIONE: dati conservati internamente, ma copia esterna NON aggiornata. Prima di disinstallare esporta i dati. " + e.Message; }
+        { _externalCopyFailed = true; return "ATTENZIONE: dati conservati internamente, ma copia esterna NON aggiornata. Prima di disinstallare esporta i dati. " + e.Message; }
     }
 
     private async Task ConfigureRecoveryAsync()
