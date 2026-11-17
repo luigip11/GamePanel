@@ -47,6 +47,11 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Probe restore failed.' }
           dotnet publish tests/GamePanel.DesktopChecks/GamePanel.DesktopChecks.csproj -c Release --no-restore -o artifacts/msix-probe
           if ($LASTEXITCODE -ne 0) { throw 'Probe publish failed.' }
+      - name: Verify that normal WPF close completes the external data archive
+        shell: pwsh
+        run: |
+          & ./artifacts/msix-probe/GamePanel.DesktopChecks.exe --close-user-data-probe
+          if ($LASTEXITCODE -ne 0) { throw 'Real WPF close/data preservation failed.' }
       - name: Compile the synthetic external x86 application
         shell: pwsh
         run: ./scripts/build-graphics-fixture.ps1

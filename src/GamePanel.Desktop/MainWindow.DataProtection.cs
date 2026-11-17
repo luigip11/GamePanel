@@ -169,7 +169,7 @@ internal sealed partial class MainWindow
                 }
                 _exitAfterProtection = true;
             }, "Aggiornamento della copia esterna prima di chiudere");
-            if (_exitAfterProtection) Close();
+            if (_exitAfterProtection) _ = Dispatcher.BeginInvoke(new Action(Close));
         };
     }
     private bool _exitAfterProtection;
