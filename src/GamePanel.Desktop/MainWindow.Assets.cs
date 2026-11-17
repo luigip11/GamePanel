@@ -380,13 +380,13 @@ internal sealed partial class MainWindow
         if (!CanPrepareAssets || plan is null || report is null) return;
         await RunFxTaskAsync((token, progress) =>
         {
-            if (plan.Changes.Count > 0) _backups.Create(report, token, progress);
+            if (plan.Changes.Count > 0) CreateProtectedBackup(report, token, progress);
             return Task.FromResult(_assets.Execute(plan, token, progress));
         }, state =>
         {
             _assetState = new(state, false, ""); _assetPlan = null; _assetPackage = null;
             _assetMessage = "Modifiche applicate e verificate. Avvia o riavvia il gioco per controllare gli asset.";
-        }, "Applicazione delle modifiche asset confermate");
+        }, "Applicazione delle modifiche asset confermate", preserveUserData: true);
     }
 
     private async Task RecoverAssetsAsync(bool rollback)
@@ -396,6 +396,6 @@ internal sealed partial class MainWindow
         {
             _assetState = new(state, false, ""); _assetPlan = null; _assetPackage = null;
             _assetMessage = rollback ? "Operazione annullata: stato asset precedente recuperato." : "Operazione asset completata e verificata.";
-        }, rollback ? "Recupero degli asset precedenti" : "Ripresa operazione asset");
+        }, rollback ? "Recupero degli asset precedenti" : "Ripresa operazione asset", preserveUserData: true);
     }
 }

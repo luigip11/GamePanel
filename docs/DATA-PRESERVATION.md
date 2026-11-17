@@ -11,7 +11,7 @@ Reset e disinstallazione MSIX possono eliminare libreria e backup interni. Un pu
 3. Attendi il messaggio di copia aggiornata e verificata. Tieni collegato il disco esterno.
 4. In alternativa usa **Esporta dati e backup** per creare un archivio indipendente.
 
-La copia esterna configurata viene aggiornata dopo i nuovi backup e alla chiusura regolare. L'ultima copia viene sostituita solo dopo che la nuova è completa e verificata. Se il disco manca o l'esportazione fallisce, i dati interni restano conservati e l'app segnala che la copia esterna non è aggiornata. Non disinstallare finché non hai risolto.
+La copia esterna configurata viene aggiornata dopo i nuovi backup, dopo applicazione/recupero dei profili gestiti e alla chiusura regolare. La stessa protezione copre i backup automatici creati dai flussi ReShade, Widescreen e asset: se la copia esterna del punto di ripristino fallisce, il flusso viene interrotto e il backup interno resta conservato. L'ultima copia viene sostituita solo dopo che la nuova è completa e verificata. Se il disco manca o l'esportazione fallisce, i dati interni restano conservati e l'app segnala che la copia esterna non è aggiornata. Non disinstallare finché non hai risolto.
 
 Nella versione Store, prima di creare il primo backup è obbligatorio scegliere una posizione esterna; annullando non viene creato il nuovo backup. La libreria richiama la protezione dei dati se manca questa configurazione.
 
@@ -23,7 +23,7 @@ Usa **Importa archivio dati**, scegli il tuo ZIP e conferma. L'app verifica indi
 
 File già identici vengono mantenuti; file esistenti diversi bloccano l'importazione senza sovrascrittura. Non è un'unione automatica di due librerie diverse. Per migrare una libreria completa è più semplice partire da dati vuoti. In caso di conflitto conserva ed esporta entrambe le copie: non cancellare l'unica copia valida per forzare l'importazione.
 
-I percorsi dei giochi restano originali: se li hai spostati, ricollegali e rianalizzali. Importare un punto di ripristino non ripristina automaticamente i file del gioco: usa poi Esamina/Ripristina, che mantiene i controlli sui conflitti.
+I percorsi dei giochi restano originali: se li hai spostati, ricollegali e rianalizzali. I punti di ripristino restano associati al percorso originale; il trasferimento a un altro percorso non è automatico. Importare un punto di ripristino non ripristina automaticamente i file del gioco: usa poi Esamina/Ripristina, che mantiene i controlli sui conflitti.
 
 ## Dalla copia portatile allo Store
 

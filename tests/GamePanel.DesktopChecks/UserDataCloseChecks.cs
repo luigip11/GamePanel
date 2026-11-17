@@ -11,12 +11,16 @@ internal static class UserDataCloseChecks
         { Console.Error.WriteLine("This proof uses disposable CI directories only."); return 1; }
         var data = Path.Combine(Path.GetTempPath(), "GamePanel-CloseData-" + Guid.NewGuid().ToString("N"));
         var external = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "GamePanel-CloseArchive-" + Guid.NewGuid().ToString("N"));
+        var game = Path.Combine(Path.GetTempPath(), "GamePanel-ProfileFixture-" + Guid.NewGuid().ToString("N"));
         var old = Environment.GetEnvironmentVariable("GAMEPANEL_DATA_ROOT");
         Exception? failure = null;
         var archive = Path.Combine(external, "recovery.zip");
         try
         {
-            Directory.CreateDirectory(data); Directory.CreateDirectory(external);
+            Directory.CreateDirectory(data); Directory.CreateDirectory(external); Directory.CreateDirectory(game);
+            var executable = Path.Combine(game, "game.exe");
+            File.Copy(Environment.ProcessPath ?? throw new InvalidOperationException("Missing test host."), executable);
+            var report = new GameInspector().Inspect(executable);
             Environment.SetEnvironmentVariable("GAMEPANEL_DATA_ROOT", data);
             File.WriteAllText(Path.Combine(data, "settings.json"), "{\"fixture\":true}");
             UserDataProtection.Configure(archive);
@@ -27,7 +31,32 @@ internal static class UserDataCloseChecks
                     var app = new Application();
                     var type = Assembly.Load("GamePanel").GetType("GamePanel.Desktop.MainWindow", true)!;
                     var window = (Window)Activator.CreateInstance(type)!;
-                    window.Loaded += (_, _) => window.Dispatcher.BeginInvoke(new Action(window.Close));
+                    window.Loaded += async (_, _) =>
+                    {
+                        try
+                        {
+                            var completed = false;
+                            var flags = BindingFlags.Instance | BindingFlags.NonPublic;
+                            var backup = type.GetMethod("CreateProtectedBackup", flags)!;
+                            Func<CancellationToken, IProgress<BackupProgress>, Task<int>> work = (token, progress) =>
+                            {
+                                backup.Invoke(window, [report, token, progress]);
+                                File.WriteAllText(Path.Combine(data, "profile-result.json"), "{\"applied\":true}");
+                                return Task.FromResult(1);
+                            };
+                            var runner = type.GetMethod("RunFxTaskAsync", flags)!.MakeGenericMethod(typeof(int));
+                            await ((Task)runner.Invoke(window, [work, new Action<int>(_ => completed = true), "CI profile data preservation", true])!);
+                            if (!completed || !File.Exists(archive)) throw new InvalidOperationException("Profile operation did not preserve its backup.");
+                            File.WriteAllText(Path.Combine(data, "close-marker.txt"), "closed-after-profile");
+                            window.Close();
+                        }
+                        catch (Exception e)
+                        {
+                            failure = e;
+                            type.GetField("_exitAfterProtection", BindingFlags.Instance | BindingFlags.NonPublic)!.SetValue(window, true);
+                            window.Close();
+                        }
+                    };
                     app.Run(window);
                 }
                 catch (Exception e) { failure = e; }
@@ -40,7 +69,10 @@ internal static class UserDataCloseChecks
             try
             {
                 UserDataArchive.Import(archive, recovered);
-                if (File.ReadAllText(Path.Combine(recovered, "settings.json")) != "{\"fixture\":true}")
+                if (File.ReadAllText(Path.Combine(recovered, "settings.json")) != "{\"fixture\":true}"
+                    || !File.Exists(Path.Combine(recovered, "profile-result.json"))
+                    || File.ReadAllText(Path.Combine(recovered, "close-marker.txt")) != "closed-after-profile"
+                    || new BackupService(Path.Combine(recovered, "Backups"), _ => false).List(executable).Count != 1)
                     throw new InvalidOperationException("Data archived during closing was not recoverable.");
             }
             finally { if (Directory.Exists(recovered)) Directory.Delete(recovered, true); }
@@ -53,6 +85,7 @@ internal static class UserDataCloseChecks
             Environment.SetEnvironmentVariable("GAMEPANEL_DATA_ROOT", old);
             if (Directory.Exists(data)) Directory.Delete(data, true);
             if (Directory.Exists(external)) Directory.Delete(external, true);
+            if (Directory.Exists(game)) Directory.Delete(game, true);
         }
     }
 }

@@ -213,12 +213,12 @@ internal sealed partial class MainWindow
         {
             _remixManagedStatus = status; _dlssSettings = status.Settings; _dlssEdits = new(); _remixManagedPlan = null;
             _remixManagedMessage = plan.Changes.Count == 0 ? "Configurazione registrata. La copia è pronta nella libreria." : "Configurazione applicata e verificata. Avvia il gioco per provarla.";
-        }, "Salvataggio configurazione con ripristino");
+        }, "Salvataggio configurazione con ripristino", preserveUserData: true);
     }
     private async Task RecoverRemixManagedAsync(bool rollback)
     {
         if (_report is null) return; var executable = _report.ExecutablePath;
         await RunFxTaskAsync((token, progress) => Task.FromResult(_remixManaged.Recover(executable, rollback, token, progress)), status =>
-        { _remixManagedStatus = status; _dlssSettings = status.Settings; _dlssEdits = new(); _remixManagedPlan = null; _remixManagedMessage = status.Message; }, "Recupero configurazione Remix");
+        { _remixManagedStatus = status; _dlssSettings = status.Settings; _dlssEdits = new(); _remixManagedPlan = null; _remixManagedMessage = status.Message; }, "Recupero configurazione Remix", preserveUserData: true);
     }
 }

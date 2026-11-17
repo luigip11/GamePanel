@@ -90,6 +90,16 @@ internal sealed partial class MainWindow
         { _externalCopyFailed = true; return "ATTENZIONE: dati conservati internamente, ma copia esterna NON aggiornata. Prima di disinstallare esporta i dati. " + e.Message; }
     }
 
+
+    private BackupManifest CreateProtectedBackup(GameReport report, CancellationToken token, IProgress<BackupProgress> progress)
+    {
+        var snapshot = _backups.Create(report, token, progress);
+        _dataTransferMessage = PreserveData(token, progress);
+        if (_externalCopyFailed)
+            throw new InvalidOperationException("Il backup interno è conservato, ma la copia esterna non è aggiornata. L'operazione è stata interrotta: controlla la destinazione prima di proseguire. " + _dataTransferMessage);
+        return snapshot;
+    }
+
     private async Task ConfigureRecoveryAsync()
     {
         if (_busy || !ChooseRecoveryDestination()) return;

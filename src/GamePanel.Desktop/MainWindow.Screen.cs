@@ -92,20 +92,20 @@ internal sealed partial class MainWindow
         var plan = _screenPlan; var report = _report; if (plan is null || report is null) return;
         await RunFxTaskAsync((token, progress) =>
         {
-            if (!plan.Removing) _backups.Create(report, token, progress);
+            if (!plan.Removing) CreateProtectedBackup(report, token, progress);
             return Task.FromResult(_widescreen.Execute(plan, token, progress));
         }, state =>
         {
             _screenPlan = null; _screenState = new(state, false, "");
             _screenMessage = state.Installed ? "Fix installato. Ora scegli nelle opzioni video la risoluzione dello schermo rilevato."
                 : "Widescreen Fix rimosso." + (state.PreservedFiles.Count > 0 ? " INI modificato conservato." : "");
-        }, "Applicazione Widescreen Fix");
+        }, "Applicazione Widescreen Fix", preserveUserData: true);
     }
     private async Task RecoverScreenAsync(bool rollback)
     {
         if (_report is null) return; var path = _report.ExecutablePath;
         await RunFxTaskAsync((token, progress) => Task.FromResult(_widescreen.Recover(path, rollback, token, progress)), state =>
-        { _screenState = new(state, false, ""); _screenPlan = null; _screenMessage = rollback ? "Operazione schermo annullata." : "Operazione schermo completata."; }, "Recupero profilo schermo");
+        { _screenState = new(state, false, ""); _screenPlan = null; _screenMessage = rollback ? "Operazione schermo annullata." : "Operazione schermo completata."; }, "Recupero profilo schermo", preserveUserData: true);
     }
     private void ReadRuntimeEvidence()
     {
