@@ -6,13 +6,24 @@ Le funzioni vengono proposte in base al gioco, al renderer e all'hardware rileva
 
 ## Download
 
-**[Scarica GamePanel alpha.17 per Windows x64](https://github.com/luigip11/GamePanel/actions/runs/44167723312/artifacts/14365599354)** · [Build e controlli](https://github.com/luigip11/GamePanel/actions/runs/44167723312).
+**[Scarica GamePanel dal Microsoft Store](https://apps.microsoft.com/detail/9NP833B30WVB)**
 
-[Pacchetto MSIX 1.0.17.0 per Partner Center](https://github.com/luigip11/GamePanel/actions/runs/44167723550/artifacts/14365439632): da caricare nel portale per nuova certificazione, non da installare localmente. Gli artifact richiedono accesso a GitHub e hanno una scadenza indicata nella pagina di download.
+Disponibile per **Windows 11 x64**, in italiano. Ultima versione del progetto: **alpha.17**; versione del pacchetto Store: **1.0.17.0**. Gli aggiornamenti della copia Store vengono distribuiti attraverso il Microsoft Store.
 
-Per usare una build portabile, estrarre tutto lo ZIP in una cartella nuova e aprire **GamePanel.exe**. Runtime dell’app incluso; guide in **Docs**, licenze in **Licenses**, materiali in **Assets**. Giochi e pacchetti Remix non sono inclusi.
+Al primo avvio, importa gli EXE dei giochi già installati dalla **Libreria**. Giochi, salvataggi e pacchetti Remix non sono inclusi: per le mod servono i relativi file e una copia compatibile del gioco. La distribuzione Store di GamePanel non certifica i plugin esterni.
 
-La versione Store alpha.17 usa un pacchetto MSIX da sottoporre a nuova certificazione; la certificazione di `1.0.16.0` non si estende al codice aggiornato. [Dettagli MSIX](docs/MSIX.md).
+Se provieni dalla versione portatile, usa **Backup e ripristino** per importare i dati precedenti. Configura una copia esterna per conservare libreria, preferenze e punti di ripristino anche dopo reset o disinstallazione. [Guida a migrazione e recupero](docs/DATA-PRESERVATION.md).
+
+<details>
+<summary>Build portabile e materiali per sviluppatori</summary>
+
+[Scarica la build portabile alpha.17 per Windows x64](https://github.com/luigip11/GamePanel/actions/runs/44167723312/artifacts/14365599354) · [Build e controlli](https://github.com/luigip11/GamePanel/actions/runs/44167723312).
+
+Gli artifact richiedono accesso a GitHub e hanno una scadenza indicata nella pagina di download. Estrai tutto lo ZIP in una cartella nuova e apri **GamePanel.exe**. Runtime dell’app incluso; guide in **Docs**, licenze in **Licenses**, materiali in **Assets**.
+
+Il pacchetto MSIX non firmato prodotto dalla CI è destinato all'invio tramite Partner Center; per installare l'app usa il collegamento al Microsoft Store sopra. [Dettagli MSIX](docs/MSIX.md).
+
+</details>
 
 ## Changelog alpha.17
 
@@ -21,7 +32,7 @@ La versione Store alpha.17 usa un pacchetto MSIX da sottoporre a nuova certifica
 - Copia esterna configurabile, aggiornata dopo i nuovi backup e alla chiusura regolare; scelta richiesta prima del primo backup Store.
 - Conservazione dell'ultimo archivio valido se esportazione, disco esterno o annullamento impediscono l'aggiornamento.
 - Avvisi su disinstallazione/reset MSIX, chiusura forzata, archivi privati e percorsi dei giochi da ricollegare.
-- Pacchetto Store `VirtualLP.GamePanel` versione `1.0.17.0`, lingua italiana e aggiornamenti tramite canale Store.
+- Disponibilità sul Microsoft Store: pacchetto `VirtualLP.GamePanel` versione `1.0.17.0`, lingua italiana e aggiornamenti tramite canale Store.
 - Collaudo Windows esteso a disinstallazione effettiva e recupero di libreria e backup da una copia esterna con dati sintetici.
 
 [Guida a conservazione, migrazione e recupero dei dati](docs/DATA-PRESERVATION.md).
@@ -91,4 +102,4 @@ Catture della vera app WPF alpha.16 su Windows, con libreria dimostrativa isolat
 
 </details>
 
-Verifica: **273/273 controlli core Windows superati**, controlli UI, avvio, updater e launcher Explorer riusciti. Le copie Remix generate richiedono un collaudo nel gioco sul PC dell'utente.
+Verifica alpha.17: **281/281 controlli core Windows superati** nella [build MSIX](https://github.com/luigip11/GamePanel/actions/runs/44167723550), con prove di installazione, disinstallazione e recupero dei dati da archivio esterno; anche la [build portabile](https://github.com/luigip11/GamePanel/actions/runs/44167723312) ha superato i controlli. Le prove usano dati sintetici; le copie Remix richiedono un collaudo nel gioco sul PC dell'utente.
