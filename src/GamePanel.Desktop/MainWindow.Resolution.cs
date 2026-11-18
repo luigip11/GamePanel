@@ -195,14 +195,14 @@ internal sealed partial class MainWindow
             _resolutionState = state; _resolutionPlan = null;
             _resolutionMessage = state is null ? "Profilo rimosso. I file cambiati fuori da GamePanel sono stati conservati."
                 : "Profilo applicato. Avvia il gioco e verifica la risoluzione nelle sue opzioni video.";
-        }, "Applicazione risoluzione");
+        }, "Applicazione risoluzione", preserveUserData: true);
         await RefreshResolutionAsync(report.ExecutablePath); if (!_closing) Render();
     }
     private async Task RecoverResolutionAsync(bool rollback)
     {
         var report = _report; if (report is null) return;
         await RunFxTaskAsync((token, progress) => Task.FromResult(_resolutionProfiles.Recover(report, rollback, token, progress)), state =>
-        { _resolutionState = state; _resolutionPlan = null; _resolutionMessage = rollback ? "Impostazioni precedenti ripristinate." : "Profilo risoluzione completato."; }, "Recupero risoluzione");
+        { _resolutionState = state; _resolutionPlan = null; _resolutionMessage = rollback ? "Impostazioni precedenti ripristinate." : "Profilo risoluzione completato."; }, "Recupero risoluzione", preserveUserData: true);
         await RefreshResolutionAsync(report.ExecutablePath); if (!_closing) Render();
     }
 }

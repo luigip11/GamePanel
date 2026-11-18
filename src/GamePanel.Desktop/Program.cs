@@ -90,7 +90,7 @@ internal sealed partial class MainWindow : Window
             if (!_busy && e.Data.GetData(DataFormats.FileDrop) is string[] { Length: 1 } paths)
                 await InspectAsync(paths[0]);
         };
-        Closing += (_, _) => { _closing = true; _cancellation?.Cancel(); _checkUpdatesCancellation?.Cancel(); };
+        InitializeDataProtection();
         Loaded += (_, _) => { InitializeDisplays(); if (_page != 5) _path.Focus(); };
         Render();
     }
@@ -220,6 +220,7 @@ internal sealed partial class MainWindow : Window
     private void RenderBackups()
     {
         Heading("Backup e ripristino", "Copie locali verificate, conservate anche dopo la chiusura dell'app.");
+        RenderUserDataProtection();
         Card("La tua copia di riferimento", _backupMessage);
         var scope = Text("Salva l'EXE e i componenti riconosciuti. Salvataggi e asset del gioco sono esclusi.", 12, Muted);
         scope.Margin = new Thickness(0, 0, 0, 14); _content.Children.Add(scope);
@@ -266,16 +267,16 @@ internal sealed partial class MainWindow : Window
     private async Task CreateBackupAsync()
     {
         var report = _report;
-        if (report is null) return;
+        if (report is null || !EnsureRecoveryDestination()) return;
         await RunBackupTaskAsync((token, progress) =>
         {
             var snapshot = _backups.Create(report, token, progress);
-            return (Snapshot: snapshot, List: _backups.List(report.ExecutablePath));
+            return (Snapshot: snapshot, List: _backups.List(report.ExecutablePath), Protection: PreserveData(token, progress));
         }, result =>
         {
             _snapshots = result.List; _selectedBackup = result.Snapshot.Id; _backupForPath = report.ExecutablePath;
             _restorePlan = null;
-            _backupMessage = $"Backup creato e verificato: {result.Snapshot.Files.Count(f => f.Existed)} file. Il gioco non è stato modificato.";
+            _backupMessage = $"Backup creato e verificato: {result.Snapshot.Files.Count(f => f.Existed)} file. Il gioco non è stato modificato. {result.Protection}";
         }, "Creazione del backup in corso");
     }
 
@@ -323,6 +324,7 @@ internal sealed partial class MainWindow : Window
         Action<T> completed, string message)
     {
         if (_busy) return;
+        _externalCopyFailed = false;
         _busy = true; _path.IsReadOnly = true; _select.IsEnabled = false; _analyze.IsEnabled = false; _export.IsEnabled = false;
         _cancel.Content = "Interrompi operazione";
         _cancel.Visibility = Visibility.Visible; _status.Text = message; _restorePlan = null;
@@ -333,7 +335,7 @@ internal sealed partial class MainWindow : Window
         {
             var token = _cancellation.Token;
             var result = await Task.Run(() => work(token, progress), token);
-            if (!_closing) { completed(result); _status.Text = "Operazione backup completata"; }
+            if (!_closing) { completed(result); _status.Text = _externalCopyFailed ? "Dati interni conservati · copia esterna non aggiornata" : "Operazione backup completata"; }
         }
         catch (OperationCanceledException)
         {

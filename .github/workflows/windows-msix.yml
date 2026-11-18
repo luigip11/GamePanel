@@ -1,0 +1,91 @@
+name: Windows MSIX compatibility
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'tests/**'
+      - 'scripts/**'
+      - 'packaging/**'
+      - 'docs/MSIX.md'
+      - 'global.json'
+      - 'Directory.Build.props'
+      - '.github/workflows/windows-msix.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  compatibility:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with:
+          global-json-file: global.json
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12.10'
+      - name: Build the existing original material
+        shell: pwsh
+        run: |
+          python -m pip install --require-hashes --only-binary=:all: -r scripts/AsphaltPackBuild/requirements-windows.txt
+          if ($LASTEXITCODE -ne 0) { throw 'Pinned material dependency installation failed.' }
+          python scripts/AsphaltPackBuild/build_directx_sample.py --output src/GamePanel.Desktop/Assets/DirectXAsphalt
+          if ($LASTEXITCODE -ne 0) { throw 'Original material generation failed.' }
+      - name: Core checks and Windows publication without executing external mod components
+        shell: pwsh
+        run: ./scripts/publish.ps1
+      - name: Publish the separate compatibility probe
+        shell: pwsh
+        run: |
+          dotnet restore tests/GamePanel.DesktopChecks/GamePanel.DesktopChecks.csproj --locked-mode
+          if ($LASTEXITCODE -ne 0) { throw 'Probe restore failed.' }
+          dotnet publish tests/GamePanel.DesktopChecks/GamePanel.DesktopChecks.csproj -c Release --no-restore -o artifacts/msix-probe
+          if ($LASTEXITCODE -ne 0) { throw 'Probe publish failed.' }
+      - name: Verify that normal WPF close completes the external data archive
+        shell: pwsh
+        run: |
+          & ./artifacts/msix-probe/GamePanel.DesktopChecks.exe --close-user-data-probe
+          if ($LASTEXITCODE -ne 0) { throw 'Real WPF close/data preservation failed.' }
+      - name: Compile the synthetic external x86 application
+        shell: pwsh
+        run: ./scripts/build-graphics-fixture.ps1
+      - name: Build and validate unsigned packages
+        shell: pwsh
+        run: |
+          ./scripts/build-msix.ps1 -PackageDirectory artifacts/GamePanel-win-x64
+          ./scripts/build-msix.ps1 -PackageDirectory artifacts/GamePanel-win-x64 -IdentityName GamePanel.CompatibilityTest -ProbeDirectory artifacts/msix-probe
+      - name: Install and exercise the compatibility package on the disposable runner
+        shell: powershell
+        run: ./scripts/check-msix.ps1 -MsixPath artifacts/msix/GamePanel.CompatibilityTest-0.1.16.0-x64-unsigned.msix -GraphicsFixturePath artifacts/graphics-fixture/speed2.exe
+      - name: Prepare unsigned package with the reserved Partner Center identity
+        shell: pwsh
+        run: ./scripts/build-store-msix.ps1 -PackageDirectory artifacts/GamePanel-win-x64
+      - name: Store replacement package - unsigned, manual submission
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: GamePanel-Store-1.0.17.0
+          path: artifacts/msix-store/
+          if-no-files-found: error
+      - name: Unsigned package for review - not a Smart App Control fix or a Store release
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: GamePanel-MSIX-unsigned-review
+          path: |
+            artifacts/msix/GamePanel.Compatibility-0.1.16.0-x64-unsigned.msix
+            artifacts/msix/GamePanel.Compatibility-AppxManifest.xml
+            artifacts/msix/GamePanel.Compatibility-package.json
+          if-no-files-found: warn
+      - name: Windows compatibility evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: GamePanel-MSIX-compatibility-evidence
+          path: artifacts/msix-proof/
+          if-no-files-found: warn

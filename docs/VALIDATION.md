@@ -1,3 +1,31 @@
+# Alpha.17 — risultati finali Windows
+
+Codice verificato: `e13691acd34564805348762b65d736bd176a5959`.
+
+- [MSIX, run 12](https://github.com/luigip11/GamePanel/actions/runs/44167723550): riuscito; 281/281 controlli core, zero saltati/falliti.
+- Prova sulla finestra reale: backup automatico nel percorso dei profili, copia esterna aggiornata dopo l'operazione e alla chiusura, archivio recuperabile.
+- Prova di disinstallazione effettiva: ZIP esterno immutato, importazione da processo senza identità MSIX, libreria recuperata e backup usato per ripristinare una configurazione sintetica.
+- [Build portatile, run 100](https://github.com/luigip11/GamePanel/actions/runs/44167723312): riuscita, inclusi controlli desktop esistenti.
+- [Report JSON](https://github.com/luigip11/GamePanel/actions/runs/44167723550/artifacts/14365808763) e [MSIX 1.0.17.0](https://github.com/luigip11/GamePanel/actions/runs/44167723550/artifacts/14365439632).
+
+Questi risultati non sono una certificazione Microsoft della nuova build, un test di Smart App Control in enforcement o un collaudo con giochi reali. Il pacchetto per Partner Center resta non firmato. Nessuna policy/certificato è stato modificato sul PC dell'utente.
+
+[Guida dati](DATA-PRESERVATION.md) · [Aggiornamento Store](STORE-SUBMISSION.md)
+
+---
+
+# Alpha.17 — conservazione dati e aggiornamento Store
+
+Il codice aggiunge ZIP verificati, importazione senza sovrascrittura, migrazione esplicita dalla cartella dati portatile e copia esterna aggiornata dopo i backup e alla chiusura regolare. La versione Store è `1.0.17.0`; non eredita la certificazione di `1.0.16.0`.
+
+I controlli core coprono anche perdita dei dati interni con recupero dei backup, conflitti, traversal, payload alterati, link, annullamento e archivio precedente conservato. Il collaudo MSIX usa fixture sintetiche e una disinstallazione effettiva; l'esito va letto nella Action della PR #8. Non sono eseguiti giochi o renderer Remix reali.
+
+La prima esecuzione ha compilato l'app ed eseguito 279/279 controlli Windows; il test UI richiedeva l'espansione di Avanzate prima di cercare la navigazione Backup. L'automazione è stata corretta. Le esecuzioni successive includono ulteriori verifiche della destinazione esterna e della sua indisponibilità.
+
+[Guida dati](DATA-PRESERVATION.md) · [Pacchetto e candidatura Store](STORE-SUBMISSION.md)
+
+---
+
 # Candidato alpha.12 — verifiche della prova Remix
 
 In ambiente Linux: 214/214 controlli superati, zero saltati; compilazione Desktop Windows con zero avvisi/errori. Le nuove prove usano un archivio 7z sintetico e file inerti: verificano origine immutata, conservazione EXE/Widescreen/modelli, esclusione AntiCull e script autore, camera libera disattivata, manifest finale, annullamento durante copia/estrazione, rifiuto di sorgente/archivio cambiati, plugin sconosciuti, link e destinazioni occupate.

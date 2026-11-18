@@ -6,29 +6,40 @@ Le funzioni vengono proposte in base al gioco, al renderer e all'hardware rileva
 
 ## Download
 
-**[Scarica GamePanel alpha.16 per Windows x64](https://github.com/luigip11/GamePanel/actions/runs/42228867851/artifacts/13507551076)** · [Build e controlli superati](https://github.com/luigip11/GamePanel/actions/runs/42228867851). Il download degli artifact richiede accesso a GitHub e resta disponibile fino al 4 febbraio 2027.
+**[Scarica GamePanel dal Microsoft Store](https://apps.microsoft.com/detail/9NP833B30WVB)**
 
-Per usare una build portabile, estrarre tutto lo ZIP in una cartella nuova e aprire **GamePanel.exe**. Runtime dell’app incluso; guide in **Docs**, licenze in **Licenses**, materiali in **Assets**. Giochi e pacchetti Remix non sono inclusi.
+Disponibile per **Windows 11 x64**, in italiano. Ultima versione del progetto: **alpha.17**; versione del pacchetto Store: **1.0.17.0**. Gli aggiornamenti della copia Store vengono distribuiti attraverso il Microsoft Store.
 
-## Changelog alpha.16
+Al primo avvio, importa gli EXE dei giochi già installati dalla **Libreria**. Giochi, salvataggi e pacchetti Remix non sono inclusi: per le mod servono i relativi file e una copia compatibile del gioco. La distribuzione Store di GamePanel non certifica i plugin esterni.
 
-- UI Windows aggiornata al prototipo approvato: schede libreria adattive, icone informative, ricerca con lente e ordinamento recenti/meno recenti/alfabetico oltre cinque giochi.
-- Avvia/Analizza, tab Grafica e pulsanti backup divisi a metà riga; azioni secondarie separate da un divisore.
-- Copertina selezionata nel riquadro Gioco; informazioni Windows accessibili dal pannello hardware; Gioca e Avvia il gioco a tutta larghezza.
-- Gioca nella pagina DLSS sopra la FAQ; campi di configurazione scuri, hover più visibili, icona aggiornamenti e collegamento al profilo GitHub dell'autore nel footer.
-- Hardware distinto in processore, GPU e RAM installata, con valori rilevati da Windows.
-- Schermo illustrato con risoluzione al centro, monitor e risoluzione affiancati, configurazione avanzata separata.
-- Punti di ripristino con conteggio, gioco/percorso, Esamina ed eliminazione confermata del singolo backup; spaziatura prima delle FAQ.
-- Preparazione locale UG1/UG2 Remix da cartella o ZIP verificato: anteprima, copia separata, annullamento, esportazione locale dei soli file catalogati e collegamento Originale/Remix. [Guida](docs/REMIX-PACKAGES.md).
-- Preparazione degli allegati per GitHub Releases in parti inferiori a 2 GiB, manifest SHA-256 e ricostruzione locale verificata dello ZIP; nessun upload automatico.
-- UG2 conserva FrontB.lzc dell'utente; Smol è un componente separato. Le configurazioni personalizzate vengono segnalate e conservate. Il download pubblico GamePanel resta disabilitato finché i pacchetti distribuibili non sono pubblicati.
-- Preset ReShade generali Originale, Nitido, Bilanciato e Cinema per EXE **x86 Direct3D 9** compatibili, con componente ufficiale verificato, anteprima e ripristino. Nessuna installazione automatica sopra Remix. [Immagine e HDR](docs/IMAGE-AND-HDR.md).
-- Pagina HDR separata: rilevamento Windows in sola lettura del colore avanzato e accesso alle impostazioni HDR, distinguendo HDR nativo, Auto HDR e filtri SDR.
-- Metadati versione EXE conservati nella libreria quando disponibili; nessuna patch dedotta dal nome del file.
+Se provieni dalla versione portatile, usa **Backup e ripristino** per importare i dati precedenti. Configura una copia esterna per conservare libreria, preferenze e punti di ripristino anche dopo reset o disinstallazione. [Guida a migrazione e recupero](docs/DATA-PRESERVATION.md).
 
-Le copie preparate richiedono una prova nel gioco. Il collaudo di una configurazione su RTX 5080 Laptop non garantisce prestazioni o stabilità su altri PC. Il download pubblico delle mod è distinto dall'importazione locale e richiede pacchetti ospitati, integrità verificata e condizioni di distribuzione rispettate.
+<details>
+<summary>Build portabile e materiali per sviluppatori</summary>
+
+[Scarica la build portabile alpha.17 per Windows x64](https://github.com/luigip11/GamePanel/actions/runs/44167723312/artifacts/14365599354) · [Build e controlli](https://github.com/luigip11/GamePanel/actions/runs/44167723312).
+
+Gli artifact richiedono accesso a GitHub e hanno una scadenza indicata nella pagina di download. Estrai tutto lo ZIP in una cartella nuova e apri **GamePanel.exe**. Runtime dell’app incluso; guide in **Docs**, licenze in **Licenses**, materiali in **Assets**.
+
+Il pacchetto MSIX non firmato prodotto dalla CI è destinato all'invio tramite Partner Center; per installare l'app usa il collegamento al Microsoft Store sopra. [Dettagli MSIX](docs/MSIX.md).
+
+</details>
+
+## Changelog alpha.17
+
+- Esportazione e importazione ZIP verificate di libreria, copertine, preferenze e punti di ripristino.
+- Importazione esplicita dalla cartella dati della copia portatile, con sorgente conservata e blocco dei conflitti.
+- Copia esterna configurabile, aggiornata dopo i nuovi backup e alla chiusura regolare; scelta richiesta prima del primo backup Store.
+- Conservazione dell'ultimo archivio valido se esportazione, disco esterno o annullamento impediscono l'aggiornamento.
+- Avvisi su disinstallazione/reset MSIX, chiusura forzata, archivi privati e percorsi dei giochi da ricollegare.
+- Disponibilità sul Microsoft Store: pacchetto `VirtualLP.GamePanel` versione `1.0.17.0`, lingua italiana e aggiornamenti tramite canale Store.
+- Collaudo Windows esteso a disinstallazione effettiva e recupero di libreria e backup da una copia esterna con dati sintetici.
+
+[Guida a conservazione, migrazione e recupero dei dati](docs/DATA-PRESERVATION.md).
 
 ## Schermate
+
+[Schermate della build alpha.17, acquisite dall'app con dati dimostrativi](https://github.com/luigip11/GamePanel/actions/runs/44167723312/artifacts/14366322203). Le immagini statiche sotto documentano la precedente alpha.16.
 
 Le anteprime mostrano la UI finale di alpha.16: Libreria, Gioco e hardware, Grafica, DLSS, Schermo, HDR e Backup.
 
@@ -91,4 +102,4 @@ Catture della vera app WPF alpha.16 su Windows, con libreria dimostrativa isolat
 
 </details>
 
-Verifica: **273/273 controlli core Windows superati**, controlli UI, avvio, updater e launcher Explorer riusciti. Le copie Remix generate richiedono un collaudo nel gioco sul PC dell'utente.
+Verifica alpha.17: **281/281 controlli core Windows superati** nella [build MSIX](https://github.com/luigip11/GamePanel/actions/runs/44167723550), con prove di installazione, disinstallazione e recupero dei dati da archivio esterno; anche la [build portabile](https://github.com/luigip11/GamePanel/actions/runs/44167723312) ha superato i controlli. Le prove usano dati sintetici; le copie Remix richiedono un collaudo nel gioco sul PC dell'utente.

@@ -106,7 +106,7 @@ internal sealed partial class MainWindow
             if (!result.Cancelled && !token.IsCancellationRequested && !prepared.WasLimited && result.InstalledCount + result.AlreadyInstalledCount == result.TotalCount)
             {
                 var plan = _directX.PrepareSettings(report, true, token);
-                if (plan.Changes.Count > 0) _backups.Create(report, token, progress);
+                if (plan.Changes.Count > 0) CreateProtectedBackup(report, token, progress);
                 _directX.Execute(plan, token, progress); activated = true;
             }
             return Task.FromResult((Result: result, Activated: activated, Snapshot: ReadDirectXUiSnapshot(report.ExecutablePath, report)));
@@ -121,7 +121,7 @@ internal sealed partial class MainWindow
                 ? $"Operazione interrotta: {completed.Result.InstalledCount} installate, {completed.Result.AlreadyInstalledCount} già presenti. Premi Installa per riprendere; nessuna attivazione automatica."
                 : $"{completed.Result.InstalledCount} texture installate · {completed.Result.AlreadyInstalledCount} già presenti. " + (completed.Activated ? "Sostituzioni attive: avvia il gioco per verificarle." : prepared.WasLimited ? "Lotto parziale salvato; attivazione automatica non eseguita." : "Attivazione non completata; controlla lo stato DirectX prima di riprendere.");
             _assetMessage = _automaticTextureMessage;
-        }, "Installazione di tutte le texture preparate · chiudi il gioco");
+        }, "Installazione di tutte le texture preparate · chiudi il gioco", preserveUserData: true);
         if (!succeeded && !_closing)
         {
             _automaticTextureFeedback = AssetFeedback.Attention;
@@ -203,7 +203,7 @@ internal sealed partial class MainWindow
         await RunFxTaskAsync((token, progress) =>
         {
             SmolModelPackBuilder.VerifyForInstall(report, prepared, token);
-            if (plan.Changes.Count > 0) _backups.Create(report, token, progress);
+            if (plan.Changes.Count > 0) CreateProtectedBackup(report, token, progress);
             SmolModelPackBuilder.VerifyForInstall(report, prepared, token);
             return Task.FromResult(_assets.Execute(plan, token, progress));
         }, state =>
@@ -214,7 +214,7 @@ internal sealed partial class MainWindow
             _assetState = new(state, false, ""); _preparedSmol = null; _smolPlan = null;
             _smolMessage = "Correzioni Smol installate e verificate per Golf, IS300 e Sentra. Avvia il gioco per controllarle; il pacchetto è gestibile in I tuoi componenti.";
             _assetMessage = _smolMessage;
-        }, "Installazione correzioni delle tre auto · copie degli originali verificate");
+        }, "Installazione correzioni delle tre auto · copie degli originali verificate", preserveUserData: true);
         if (!succeeded && !_closing)
         {
             _smolFeedback = AssetFeedback.Attention;

@@ -242,10 +242,10 @@ internal sealed partial class MainWindow
         _directXPlan = null;
         await RunFxTaskAsync((token, progress) =>
         {
-            if (plan.Changes.Count > 0) _backups.Create(report, token, progress);
+            if (plan.Changes.Count > 0) CreateProtectedBackup(report, token, progress);
             _directX.Execute(plan, token, progress);
             return Task.FromResult(_directX.Status(report.ExecutablePath));
-        }, state => { _directXState = state; _directXMessage = state.Installed ? "Componente DirectX pronto. Avvia normalmente il gioco per verificare il pannello INSERT e una singola superficie." : "Componente DirectX rimosso. Catture e sostituzioni personali conservate."; }, "Applicazione delle modifiche DirectX approvate");
+        }, state => { _directXState = state; _directXMessage = state.Installed ? "Componente DirectX pronto. Avvia normalmente il gioco per verificare il pannello INSERT e una singola superficie." : "Componente DirectX rimosso. Catture e sostituzioni personali conservate."; }, "Applicazione delle modifiche DirectX approvate", preserveUserData: true);
     }
 
     private async Task RecoverDirectXTexturesAsync(bool rollback)
@@ -256,7 +256,7 @@ internal sealed partial class MainWindow
         {
             _directX.Recover(report.ExecutablePath, rollback, token, progress);
             return Task.FromResult(_directX.Status(report.ExecutablePath));
-        }, state => { _directXState = state; _directXReadFailed = false; _directXMessage = rollback ? "Stato DirectX precedente recuperato." : "Operazione DirectX completata."; }, "Recupero operazione DirectX");
+        }, state => { _directXState = state; _directXReadFailed = false; _directXMessage = rollback ? "Stato DirectX precedente recuperato." : "Operazione DirectX completata."; }, "Recupero operazione DirectX", preserveUserData: true);
     }
 
     private async Task RefreshDirectXCaptureListAsync()
@@ -309,7 +309,7 @@ internal sealed partial class MainWindow
         {
             _directXReplacements.Recover(report, state.ResourceRoot, rollback, token);
             return Task.FromResult(ReadDirectXUiSnapshot(report.ExecutablePath, report, token));
-        }, snapshot => { ApplyDirectXUiSnapshot(snapshot); _directXMessage = rollback ? "Sostituzione DDS annullata e stato precedente recuperato." : "Sostituzione DDS completata."; }, "Recupero sostituzione DDS");
+        }, snapshot => { ApplyDirectXUiSnapshot(snapshot); _directXMessage = rollback ? "Sostituzione DDS annullata e stato precedente recuperato." : "Sostituzione DDS completata."; }, "Recupero sostituzione DDS", preserveUserData: true);
     }
 
     private async Task InstallDirectXReplacementAsync()
@@ -323,7 +323,7 @@ internal sealed partial class MainWindow
         {
             _directXReplacements.Install(report, state.ResourceRoot, hash, path, token);
             return Task.FromResult(_directXReplacements.ListInstalled(report, state.ResourceRoot, token));
-        }, installed => { _directXInstalled = installed; _directXReplacementPath = ""; _directXMessage = "Sostituzione salvata. Prepara l'attivazione dal riquadro DirectX, poi verifica una gara."; }, "Salvataggio sostituzione DDS nei dati di GamePanel");
+        }, installed => { _directXInstalled = installed; _directXReplacementPath = ""; _directXMessage = "Sostituzione salvata. Prepara l'attivazione dal riquadro DirectX, poi verifica una gara."; }, "Salvataggio sostituzione DDS nei dati di GamePanel", preserveUserData: true);
     }
 
     private async Task RemoveDirectXReplacementAsync()
@@ -336,7 +336,7 @@ internal sealed partial class MainWindow
         {
             _directXReplacements.Remove(report, state.ResourceRoot, hash, token);
             return Task.FromResult(_directXReplacements.ListInstalled(report, state.ResourceRoot, token));
-        }, installed => { _directXInstalled = installed; _directXMessage = "Sostituzione rimossa. La cattura originale è conservata."; }, "Rimozione sostituzione DDS gestita");
+        }, installed => { _directXInstalled = installed; _directXMessage = "Sostituzione rimossa. La cattura originale è conservata."; }, "Rimozione sostituzione DDS gestita", preserveUserData: true);
     }
 
     private void ClearAssetAndDirectXPlans()

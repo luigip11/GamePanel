@@ -151,7 +151,7 @@ internal sealed partial class MainWindow
         var plan = _fxPlan; if (plan is null || _report is null) return;
         await RunFxTaskAsync((token, progress) =>
         {
-            if (!plan.Removing && _fxState?.State?.Installed != true) _backups.Create(_report, token, progress);
+            if (!plan.Removing && _fxState?.State?.Installed != true) CreateProtectedBackup(_report, token, progress);
             var state = _profiles.Execute(plan, token, progress);
             return Task.FromResult(state);
         }, state =>
@@ -159,7 +159,7 @@ internal sealed partial class MainWindow
             _fxState = new(state, false, ""); _fxPlan = null;
             _fxMessage = state.Installed ? "Profilo applicato. Avvia o riavvia il gioco per provarlo."
                 : "ReShade rimosso." + (state.PreservedFiles.Count == 0 ? "" : " Conservati file modificati: " + string.Join(", ", state.PreservedFiles));
-        }, "Applicazione delle modifiche approvate");
+        }, "Applicazione delle modifiche approvate", preserveUserData: true);
     }
     private async Task RecoverProfileAsync(bool rollback)
     {
@@ -168,11 +168,13 @@ internal sealed partial class MainWindow
         {
             _fxState = new(state, false, ""); _fxSettings = state?.Settings ?? SdrSettings.Balanced; _fxPlan = null;
             _fxMessage = rollback ? "Operazione annullata: stato precedente recuperato." : "Operazione completata e verificata.";
-        }, rollback ? "Recupero dello stato precedente" : "Ripresa operazione interrotta");
+        }, rollback ? "Recupero dello stato precedente" : "Ripresa operazione interrotta", preserveUserData: true);
     }
-    private async Task RunFxTaskAsync<T>(Func<CancellationToken, IProgress<BackupProgress>, Task<T>> work, Action<T> completed, string message)
+    private async Task RunFxTaskAsync<T>(Func<CancellationToken, IProgress<BackupProgress>, Task<T>> work, Action<T> completed, string message, bool preserveUserData = false)
     {
         if (_busy) return;
+        if (preserveUserData && !EnsureRecoveryDestination()) return;
+        _externalCopyFailed = false;
         ClearAutomaticAssetFeedback();
         _busy = true; _path.IsReadOnly = true; _select.IsEnabled = false; _analyze.IsEnabled = false; _export.IsEnabled = false;
         _cancel.Content = "Interrompi operazione"; _cancel.Visibility = Visibility.Visible; _status.Text = message;
@@ -181,7 +183,13 @@ internal sealed partial class MainWindow
         try
         {
             var result = await Task.Run(() => work(operation.Token, progress), operation.Token);
-            if (!_closing) { completed(result); _status.Text = "Operazione profilo completata"; }
+            if (!_closing)
+            {
+                completed(result);
+                if (preserveUserData)
+                    _dataTransferMessage = await Task.Run(() => PreserveData(operation.Token, progress));
+                _status.Text = _externalCopyFailed ? "Dati interni conservati · copia esterna non aggiornata" : "Operazione profilo completata";
+            }
         }
         catch (Exception e) when (e is OperationCanceledException or IOException or InvalidDataException or UnauthorizedAccessException or ArgumentException or InvalidOperationException or HttpRequestException or BadImageFormatException)
         {
